@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-04-21-test.md",
+                "file": "_pages/about.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-04-21-test"
+              "title": "about"
             }
           }
         ]
@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "address",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,8 +74,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -95,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_posts/2025-04-21-test.md",
+                "file": "_pages/about.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -105,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 2025-04-21-test"
+              "title": "Backlinks for about"
             }
           },
           {
@@ -114,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_posts/2025-04-21-test.md",
+                "file": "_pages/about.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 2025-04-21-test"
+              "title": "Outgoing links from about"
             }
           },
           {
@@ -143,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_posts/2025-04-21-test.md",
+                "file": "_pages/about.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 2025-04-21-test"
+              "title": "Outline of about"
             }
           }
         ]
@@ -169,11 +168,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "070cf1fd82a6efc3",
+  "active": "23d608fbfc296323",
   "lastOpenFiles": [
+    "_bibliography/papers.bib",
+    "_bibliography",
+    "_includes/bib_search.liquid",
+    "_layouts/bib.liquid",
+    "_pages/publications.md",
+    "CONTRIBUTING.md",
+    "_pages/about_einstein.md",
+    "_pages/about.md",
+    "_posts/2025-04-21-test.md",
     "assets/img/OjasPatil.jpg",
     "assets/img/IMG-20241114-WA0030.jpg",
-    "_posts/2025-04-21-test.md",
     "_posts/2015-03-15-formatting-and-links.md",
     "_posts/2025-03-26-plotly.md"
   ]
