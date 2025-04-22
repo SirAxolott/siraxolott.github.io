@@ -193,6 +193,15 @@ exclude:
   - README.md
   - readme_preview/
   - vendor
+  - _bibliography
+  - _pages/publications.md
+  - _layouts/bib.liquid
+  - _includes/bib_search.liquid
+  - _includes/citation.liquid
+  - _includes/selected_papers.liquid
+  - _plugins/google-scholar-citations.rb
+  - _plugins/hide-custom-bibtex.rb
+  - _plugins/inspirehep-citations.rb
 keep_files:
   - CNAME
   - .nojekyll
@@ -260,34 +269,34 @@ jekyll-archives:
 display_tags: ["formatting", "images", "links", "math", "code", "blockquotes"] # these tags will be displayed on the front page of your blog
 display_categories: ["external-services"] # these categories will be displayed on the front page of your blog
 
-# # -----------------------------------------------------------------------------
-# # Jekyll Scholar
-# # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Jekyll Scholar
+# -----------------------------------------------------------------------------
 
-# scholar:
-#   last_name: [Einstein]
-#   first_name: [Albert, A.]
+scholar:
+  last_name: [Einstein]
+  first_name: [Albert, A.]
 
-#   style: apa
-#   locale: en
+  style: apa
+  locale: en
 
-#   source: /_bibliography/
-#   bibliography: papers.bib
-#   bibliography_template: bib
-#   # Note: if you have latex math in your bibtex, the latex filter
-#   # preprocessing may conflict with MathJAX if the latter is enabled.
-#   # See https://github.com/alshedivat/al-folio/issues/357.
-#   bibtex_filters: [latex, smallcaps, superscript]
+  source: /_bibliography/
+  bibliography: papers.bib
+  bibliography_template: bib
+  # Note: if you have latex math in your bibtex, the latex filter
+  # preprocessing may conflict with MathJAX if the latter is enabled.
+  # See https://github.com/alshedivat/al-folio/issues/357.
+  bibtex_filters: [latex, smallcaps, superscript]
 
-#   replace_strings: true
-#   join_strings: true
+  replace_strings: true
+  join_strings: true
 
-#   details_dir: bibliography
-#   details_link: Details
+  details_dir: bibliography
+  details_link: Details
 
-#   query: "@*"
-#   group_by: year
-#   group_order: descending
+  query: "@*"
+  group_by: year
+  group_order: descending
 
 # Display different badges withs stats for your publications
 # Customize badge behavior in _layouts/bib.liquid
