@@ -47,6 +47,16 @@
       ]
     }
   ],
+  "interests": [
+    {
+      "name": "Compputer Engineering",
+      "icon": "fa-solid fa-tag",
+      "keywords": [
+        "Computer Architecture",
+        "VLSI"
+      ]
+    }
+  ],
   "languages": [
     {
       "language": "English",
@@ -63,16 +73,7 @@
       "fluency": "Native Speaker",
       "icon": ""
     }
-  ],
-  "interests": [
-    {
-      "name": "Compputer Engineering",
-      "icon": "fa-solid fa-tag",
-      "keywords": [
-        "Computer Architecture",
-        "VLSI"
-      ]
-    }
   ]
+  
 
 }
