@@ -518,13 +518,6 @@ ninja.data = [{
           window.open("https://www.linkedin.com/in/ojas-patil-250241316", "_blank");
         },
       },{
-        id: 'social-whatsapp',
-        title: 'whatsapp',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://wa.me/+1 608 724 4265", "_blank");
-        },
-      },{
       id: 'light-theme',
       title: 'Change theme to light',
       description: 'Change the theme of the site to Light',
