@@ -202,6 +202,8 @@ exclude:
   - _plugins/google-scholar-citations.rb
   - _plugins/hide-custom-bibtex.rb
   - _plugins/inspirehep-citations.rb
+  - _pages/profiles.md
+  - _pages/teaching.md
 keep_files:
   - CNAME
   - .nojekyll
