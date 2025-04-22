@@ -1,26 +1,26 @@
 {
   "basics": {
-    "name": "Albert Einstein",
-    "label": "Scientist",
+    "name": "Ojas Patil",
+    "label": "Student",
     "image": "",
-    "email": "albert@einstein.de",
-    "phone": "(912) 123-4567",
-    "url": "https://alshedivat.github.io/al-folio/",
-    "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
-    "location": {
-      "address": "2712 Broadway St",
-      "postalCode": "CA 94115",
-      "city": "San Francisco",
-      "countryCode": "US",
-      "region": "California"
-    },
-    "profiles": [
-      {
-        "network": "Twitter",
-        "username": "AlbertEinstein",
-        "url": "https://twitter.com/AlbertEinstein"
-      }
-    ]
+    "email": "ospatil@wisc.edu",
+    "phone": "(608)-724-465",
+    "url": "https://siraxolott.github.io/",
+    // "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
+    // "location": {
+    //   "address": "2712 Broadway St",
+    //   "postalCode": "CA 94115",
+    //   "city": "San Francisco",
+    //   "countryCode": "US",
+    //   "region": "California"
+    // },
+    // "profiles": [
+    //   {
+    //     "network": "Twitter",
+    //     "username": "AlbertEinstein",
+    //     "url": "https://twitter.com/AlbertEinstein"
+    //   }
+    // ]
   },
   "work": [
     {
