@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "google gemini",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -169,8 +169,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5eb260e41984d000",
+  "active": "070cf1fd82a6efc3",
   "lastOpenFiles": [
+    "assets/img/OjasPatil.jpg",
+    "assets/img/IMG-20241114-WA0030.jpg",
     "_posts/2025-04-21-test.md",
     "_posts/2015-03-15-formatting-and-links.md",
     "_posts/2025-03-26-plotly.md"
