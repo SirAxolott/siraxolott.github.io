@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_pages/profiles.md",
+                "file": "_pages/repositories.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "profiles"
+              "title": "repositories"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_pages/profiles.md",
+                "file": "_pages/repositories.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for profiles"
+              "title": "Backlinks for repositories"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_pages/profiles.md",
+                "file": "_pages/repositories.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from profiles"
+              "title": "Outgoing links from repositories"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_pages/profiles.md",
+                "file": "_pages/repositories.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of profiles"
+              "title": "Outline of repositories"
             }
           }
         ]
@@ -170,12 +170,14 @@
   },
   "active": "070cf1fd82a6efc3",
   "lastOpenFiles": [
+    "_pages/projects.md",
+    "_pages/publications.md",
+    "_pages/profiles.md",
     "_pages/about.md",
     "_bibliography/papers.bib",
     "_bibliography",
     "_includes/bib_search.liquid",
     "_layouts/bib.liquid",
-    "_pages/publications.md",
     "CONTRIBUTING.md",
     "_pages/about_einstein.md",
     "_posts/2025-04-21-test.md",

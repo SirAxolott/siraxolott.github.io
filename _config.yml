@@ -204,6 +204,7 @@ exclude:
   - _plugins/inspirehep-citations.rb
   - _pages/profiles.md
   - _pages/teaching.md
+  - _pages/dropdown.md
 keep_files:
   - CNAME
   - .nojekyll
