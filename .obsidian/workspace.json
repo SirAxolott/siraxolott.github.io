@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "google gemini",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,7 +74,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -168,7 +169,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "070cf1fd82a6efc3",
+  "active": "5eb260e41984d000",
   "lastOpenFiles": [
     "_posts/2025-04-21-test.md",
     "_posts/2015-03-15-formatting-and-links.md",
