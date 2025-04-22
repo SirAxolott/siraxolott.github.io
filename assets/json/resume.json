@@ -25,7 +25,17 @@
       "position": "Student Stocker",
       "url": "https://www.housing.wisc.edu/dining/locations/gordon/",
       "startDate": "2024-11-01",
-      "endDate": "Present"
+      "endDate": "Present",
+      "summary": "Executed accurate order fulfillment by preparing and packaging products into retail-ready containers based on specific order lists, contributing directly to sales operations and product availability."
+    }
+  ],
+  "projects": [
+    {
+      "name": "DIY Mechanical Keyboard",
+      "summary": "Designed a Mechanical Keyboard using a Raspberry Pi Pico.",
+      "startDate": "2025-03-16",
+      "endDate": "2025-04-22",
+      "url": ""
     }
   ],
   "skills": [
@@ -63,15 +73,6 @@
         "VLSI"
       ]
     }
-  ],
-  "projects": [
-    {
-      "name": "DIY Mechanical Keyboard",
-      "summary": "Designed a Mechanical Keyboard using a Raspberry Pi Pico.",
-      "highlights": [""],
-      "startDate": "2025-03-16",
-      "endDate": "2025-04-22",
-      "url": ""
-    }
   ]
+
 }
