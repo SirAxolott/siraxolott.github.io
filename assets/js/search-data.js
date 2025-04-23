@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-test",
+        },{id: "post-diy-mechanical-keyboard-part-1",
+        
+          title: "Diy mechanical keyboard part 1",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/DIY-Mechanical-Keyboard-Part-1/";
+          
+        },
+      },{id: "post-test",
         
           title: "Test",
         
