@@ -38,6 +38,16 @@ The **Keyboard Layout Editor (KLE)** ([https://www.keyboard-layout-editor.com/](
     * **Key Properties:** Use the properties panel or the raw data tab. Properties like `{w:2}` define width, `{x:0.25}` adds horizontal spacing, `{a:4}` changes legend alignment. Study the syntax!
     * **My Layout:** I specifically left space in the top-left for my rotary encoder.
         ![Keyboard Layout](keyboard-layout.png)
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="_posts/Screenshots/keyboard-layout.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all.
+</div>
+
 4.  **Export:** Crucially, export your layout in **TWO formats**:
     * **`.json` file:** This contains the precise positional data we'll use later for placing components. ([My JSON for reference](keyboard-layout.json))
     * **`.png` file:** A visual reference helpful during the process.
