@@ -1,1 +1,655 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://siraxolott.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://siraxolott.github.io/" rel="alternate" type="text/html" hreflang="en"/><updated>2025-04-23T21:34:23+00:00</updated><id>https://siraxolott.github.io/feed.xml</id><title type="html">blank</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. </subtitle><entry><title type="html">DIY Mechanical Keyboard Part 1</title><link href="https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard/" rel="alternate" type="text/html" title="DIY Mechanical Keyboard Part 1"/><published>2025-04-22T00:00:00+00:00</published><updated>2025-04-22T00:00:00+00:00</updated><id>https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard</id><content type="html" xml:base="https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard/"><![CDATA[<h1 id="your-first-custom-keyboard-pcb-a-step-by-step-guide">Your First Custom Keyboard PCB: A Step-by-Step Guide</h1> <p>So, you’re ready to ditch the off-the-shelf options and build a keyboard that’s <em>truly</em> yours? Awesome! Designing your own Printed Circuit Board (PCB) is a hugely rewarding part of the custom keyboard hobby. It might seem daunting initially, but breaking it down step-by-step makes it manageable.</p> <p>This guide walks through my process for designing the <strong>Switch Daughterboard</strong> – the part that holds the keyswitches – using KiCad, a fantastic free and open-source tool. I opted for a two-board design: this Switch Daughterboard connects to a separate Main Logic Board housing the microcontroller (like a Raspberry Pi Pico). Why? Using a pre-made dev board saves complexity, but putting it directly on the main switch PCB would make the keyboard unnecessarily large. Stacking them keeps things compact!</p> <p>Ready? Let’s dive in!</p> <hr/> <h2 id="phase-1-planning-your-perfect-layout">Phase 1: Planning Your Perfect Layout</h2> <p>Before touching any software, we need a clear plan.</p> <h3 id="step-1-define-your-vision-features--form-factor">Step 1: Define Your Vision (Features &amp; Form Factor)</h3> <p>What kind of keyboard do you want?</p> <ul> <li><strong>Size/Layout:</strong> Full-size? Tenkeyless (TKL)? Compact 60%? Something unique like an Alice layout?</li> <li><strong>Special Features:</strong> Want a rotary encoder (knob) for volume? An OLED screen? RGB LEDs? Extra macro keys?</li> </ul> <p>Think about the core experience you want. For my first build, I aimed for a compact layout similar to a Keycool 84 but added a rotary encoder for volume control. Starting slightly simpler is often wise!</p> <h3 id="step-2-design-the-physical-layout-with-kle">Step 2: Design the Physical Layout with KLE</h3> <p>The <strong>Keyboard Layout Editor (KLE)</strong> (<a href="https://www.keyboard-layout-editor.com/">https://www.keyboard-layout-editor.com/</a>) is the standard tool for visualizing and defining your physical key arrangement.</p> <ol> <li><strong>Visit KLE:</strong> Open the website.</li> <li><strong>Start Designing:</strong> You can start from scratch or load a template via the <strong>Preset</strong> menu. (I started with the <strong>Keycool 84</strong> preset and modified it).</li> <li><strong>Customize:</strong> Arrange keys, adjust their sizes, and add labels. <ul> <li><strong>Key Properties:</strong> Use the properties panel or the raw data tab. Properties like <code class="language-plaintext highlighter-rouge">{w:2}</code> define width, <code class="language-plaintext highlighter-rouge">{x:0.25}</code> adds horizontal spacing, <code class="language-plaintext highlighter-rouge">{a:4}</code> changes legend alignment. Study the syntax!</li> <li><strong>My Layout:</strong> I specifically left space in the top-left for my rotary encoder. <img src="keyboard-layout.png" alt="Keyboard Layout"/></li> </ul> </li> </ol> <div class="row mt-3"> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/keyboard-layout-480.webp 480w,/assets/img/keyboard-layout-800.webp 800w,/assets/img/keyboard-layout-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/keyboard-layout.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> </div> <div class="caption"> A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all. </div> <ol> <li><strong>Export:</strong> Crucially, export your layout in <strong>TWO formats</strong>: <ul> <li><strong><code class="language-plaintext highlighter-rouge">.json</code> file:</strong> This contains the precise positional data we’ll use later for placing components. (<a href="keyboard-layout.json">My JSON for reference</a>)</li> <li><strong><code class="language-plaintext highlighter-rouge">.png</code> file:</strong> A visual reference helpful during the process.</li> </ul> </li> </ol> <h3 id="step-3-plan-your-electrical-matrix">Step 3: Plan Your Electrical Matrix</h3> <p>Underneath the keycaps, keyboards use a grid (matrix) of rows and columns to detect keypresses. When you press a key, it connects a specific row wire to a specific column wire, telling the microcontroller which key was activated.</p> <ul> <li><strong>Visualize the Grid:</strong> Look at your KLE layout PNG. Mentally (or physically, if you print it) overlay a grid connecting the <em>centers</em> of the keys. You decide how many rows and columns you need. Fewer rows/columns mean fewer pins required on your microcontroller, but the wiring can sometimes be more complex.</li> <li><strong>My Grid:</strong> Here’s how I mapped out my rows and columns, assigning numbers starting from 0. Notice how the rotary encoder’s <em>switch</em> function also occupies a spot in the matrix (Row 0, Col 15 in my case). <img src="keyboard-matrix.jpeg" alt="Keyboard Matrix Grid"/></li> <li><strong>Count Connections:</strong> Note down the number of rows and columns. You’ll also need connections for your encoder’s rotation pins (A &amp; B) and ground (GND). This count determines the size of the connector between the daughterboard and the main logic board.</li> </ul> <hr/> <h2 id="phase-2-schematic-design-in-kicad">Phase 2: Schematic Design in KiCad</h2> <p>Now, let’s translate our plan into an electrical blueprint using KiCad.</p> <h3 id="step-4-kicad-setup-installation--resources">Step 4: KiCad Setup (Installation &amp; Resources)</h3> <ol> <li><strong>Install KiCad:</strong> Download and install it from the official website: <a href="https://www.kicad.org/download/">https://www.kicad.org/download/</a></li> <li><strong>Get Essential Libraries:</strong> We need specific symbols (schematic representation) and footprints (PCB land pattern) for keyboard parts. <ul> <li>Download the <strong>‘ScottoKicad’ library</strong> files from <a href="https://github.com/joe-scotto/scottokeebs/tree/main/Extras/ScottoKicad">here</a>. Follow the instructions on that page to add them to KiCad’s library manager. This gives us nice placeholder symbols and other useful bits.</li> </ul> </li> <li><strong>Install Helpful Plugins:</strong> Use KiCad’s <strong>Plugin and Content Manager</strong> (Tools -&gt; Plugin and Content Manager) to install: <ul> <li><code class="language-plaintext highlighter-rouge">Fabrication Toolkit</code>: Useful for generating manufacturing files later.</li> <li><code class="language-plaintext highlighter-rouge">Keyswitch Kicad Library</code>: Provides many switch footprints.</li> <li><code class="language-plaintext highlighter-rouge">Keyboard footprints placer</code>: <em>Essential</em> for accurately placing switches and diodes based on your KLE file. <img src="plugin-content-manager-ss.png" alt="KiCad Plugin Manager"/></li> </ul> </li> </ol> <h3 id="step-5-building-the-switch-daughterboard-schematic">Step 5: Building the Switch Daughterboard Schematic</h3> <ol> <li><strong>Create Project:</strong> Start a new KiCad project for your Switch Daughterboard. Open the schematic file (<code class="language-plaintext highlighter-rouge">&lt;project_name&gt;.kicad_sch</code>).</li> <li><strong>Place Basic Unit:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code> (Add Symbol).</li> <li>Add <code class="language-plaintext highlighter-rouge">Placeholder_Keyswitch</code> and <code class="language-plaintext highlighter-rouge">Placeholder_Diode</code> (from the <code class="language-plaintext highlighter-rouge">scottokeebs</code> library).</li> <li>Arrange them. The diode prevents “ghosting” (false keypresses). We’ll connect one switch pin to the column, and the diode connects the other pin to the row. <img src="unitcell.png" alt="Single Switch/Diode Unit"/></li> </ul> </li> <li><strong>Replicate for the Matrix:</strong> <ul> <li>Select the switch and diode pair.</li> <li>Copy (<code class="language-plaintext highlighter-rouge">Ctrl+C</code>) and Paste (<code class="language-plaintext highlighter-rouge">Ctrl+V</code>) this unit for <em>every single key</em> in your layout. Arrange them roughly mirroring your planned grid (from Step 3).</li> <li><strong>Crucially:</strong> Ensure the reference designators (S1, D1, S2, D2…) are sequential and without gaps. The placement plugin relies on this! <img src="schematic-matrix.png" alt="Full Schematic Matrix Layout"/></li> </ul> </li> <li><strong>Wire Rows &amp; Columns:</strong> <ul> <li>Use the Wire tool (<code class="language-plaintext highlighter-rouge">W</code>).</li> <li>Connect the designated switch pins together for each column.</li> <li>Connect the diodes together for each row.</li> <li>Add Global Labels (<code class="language-plaintext highlighter-rouge">Ctrl+L</code>): Label each row line (e.g., <code class="language-plaintext highlighter-rouge">ROW0</code>, <code class="language-plaintext highlighter-rouge">ROW1</code>…) and each column line (e.g., <code class="language-plaintext highlighter-rouge">COL0</code>, <code class="language-plaintext highlighter-rouge">COL1</code>…) according to your plan from Step 3. <img src="column-row-matrix.png" alt="Wired and Labeled Matrix"/></li> </ul> </li> <li><strong>Add Rotary Encoder:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code>, find and add <code class="language-plaintext highlighter-rouge">RotaryEncoder_Switch</code>.</li> <li>Wire it: <ul> <li>Pins <code class="language-plaintext highlighter-rouge">A</code> and <code class="language-plaintext highlighter-rouge">B</code> (rotation): Connect to global labels <code class="language-plaintext highlighter-rouge">PIN_A</code> and <code class="language-plaintext highlighter-rouge">PIN_B</code>.</li> <li>Common pin (<code class="language-plaintext highlighter-rouge">C</code>): Connect to a <code class="language-plaintext highlighter-rouge">GND</code> power symbol (add one if needed).</li> <li>Switch pins (<code class="language-plaintext highlighter-rouge">S1</code>, <code class="language-plaintext highlighter-rouge">S2</code>): Connect these <em>directly</em> into your matrix like any other switch. I connected mine to <code class="language-plaintext highlighter-rouge">ROW0</code> and <code class="language-plaintext highlighter-rouge">COL15</code>.</li> <li>Add a <code class="language-plaintext highlighter-rouge">GND</code> global label to the ground connection as well. <img src="rotaryencoder-switch.png" alt="Rotary Encoder Wiring"/></li> </ul> </li> </ul> </li> <li><strong>Add Daughterboard Connector:</strong> <ul> <li><strong>Calculate Pins:</strong> Sum your rows + columns + encoder pins (<code class="language-plaintext highlighter-rouge">PIN_A</code>, <code class="language-plaintext highlighter-rouge">PIN_B</code>, <code class="language-plaintext highlighter-rouge">GND</code>). (My calculation: 16 cols + 6 rows + 3 encoder = 25 pins).</li> <li><strong>Choose Connector:</strong> Select a standard header size that fits your pin count. A 2xN pin header is common. I chose a 2x13 (26 pins) for some spare capacity, using the <code class="language-plaintext highlighter-rouge">Conn_02x13_Odd_Even</code> symbol.</li> <li><strong>Place &amp; Wire:</strong> Add the connector symbol (<code class="language-plaintext highlighter-rouge">A</code> key). Wire each pin to the corresponding global label (<code class="language-plaintext highlighter-rouge">ROW0</code>, <code class="language-plaintext highlighter-rouge">COL0</code>, <code class="language-plaintext highlighter-rouge">PIN_A</code>, <code class="language-plaintext highlighter-rouge">GND</code>, etc.). Plan a logical pinout. <img src="connector-daughterboard.png" alt="Daughterboard Connector Wiring"/></li> </ul> </li> <li><strong>Add Mounting Holes:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code>, add four <code class="language-plaintext highlighter-rouge">MountingHole</code> symbols. These will be used to screw the PCB into a case.</li> </ul> </li> </ol> <h3 id="step-6-assigning-physical-footprints">Step 6: Assigning Physical Footprints</h3> <p>Now we link each schematic symbol to its physical counterpart on the PCB.</p> <ol> <li><strong>Open Tool:</strong> Click the “Assign PCB footprints…” button on the top toolbar. <img src="assign-footprint-button.png" alt="Assign Footprint Button"/></li> <li><strong>Assign Footprints Window:</strong> <img src="assign-footprint.png" alt="Assign Footprint Window"/></li> <li><strong>Diodes:</strong> <ul> <li>Filter by <code class="language-plaintext highlighter-rouge">ScottoKeebs_Components</code> library (left pane).</li> <li>Select all Diodes (D1, D2…) in the center pane.</li> <li>Find and double-click <code class="language-plaintext highlighter-rouge">Diode_SOD-123</code> in the right pane.</li> </ul> </li> <li><strong>Switches (Multi-step):</strong> <ul> <li><strong>Default:</strong> Filter by <code class="language-plaintext highlighter-rouge">PCM_Switch_Keyboard_Hotswap_Kailh</code>. Select <em>all</em> Switches (S1, S2…) in the center pane. Assign the standard 1u footprint: <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_1.00u</code>.</li> <li><strong>Custom Widths:</strong> <strong>Refer back to your KLE <code class="language-plaintext highlighter-rouge">.json</code> file!</strong> Find keys with non-1 <code class="language-plaintext highlighter-rouge">"w"</code> values. Note the key’s position and correlate it to the correct S# in your schematic.</li> <li><strong>Assign Specifics:</strong> Select <em>each non-1u switch individually</em> (e.g., S73). Find and assign the corresponding footprint based on its width (e.g., <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_1.25u</code>, <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_2.00u</code>, <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_6.25u</code> for spacebar, etc.). <ul> <li><em>My Specifics:</em> <ul> <li>S73,74,75=1.25u;</li> <li>S30,43=1.50u;</li> <li>S45,70=1.75u;</li> <li>S28=2.00u;</li> <li>S57,59=2.25u;</li> <li>S76=6.25u.</li> </ul> </li> </ul> </li> </ul> </li> <li><strong>Rotary Encoder:</strong> <ul> <li>Select the encoder symbol (RE1). Filter by <code class="language-plaintext highlighter-rouge">Rotary_Encoder</code> library. Assign <code class="language-plaintext highlighter-rouge">RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm_CircularMountingHoles</code>.</li> </ul> </li> <li><strong>Connector:</strong> <ul> <li>Select the connector symbol (J1). Filter by <code class="language-plaintext highlighter-rouge">Connector_PinSocket_2.54mm</code>. Assign the corresponding size, e.g., <code class="language-plaintext highlighter-rouge">PinSocket_2x13_P2.54mm_Vertical</code>. (P2.54mm is the standard 0.1” pitch).</li> </ul> </li> <li><strong>Mounting Holes:</strong> <ul> <li>Select the mounting hole symbols (H1-H4). Filter by <code class="language-plaintext highlighter-rouge">MountingHole</code>. Assign <code class="language-plaintext highlighter-rouge">MountingHole_4.3mm_M4</code> (for M4 screws) or <code class="language-plaintext highlighter-rouge">MountingHole_3.2mm_M3</code> (for M3). Choose based on your planned case hardware.</li> </ul> </li> </ol> <p>Click <strong>OK</strong> to save assignments. The schematic is logically complete!</p> <hr/> <h2 id="phase-3-pcb-layout-in-kicad">Phase 3: PCB Layout in KiCad</h2> <p>Time to arrange the physical components on the board.</p> <h3 id="step-7-initial-pcb-setup--switch-placement">Step 7: Initial PCB Setup &amp; Switch Placement</h3> <ol> <li><strong>Open PCB Editor:</strong> Go back to the main KiCad project window and open the <code class="language-plaintext highlighter-rouge">&lt;project_name&gt;.kicad_pcb</code> file.</li> <li><strong>Update from Schematic:</strong> Click the “Update PCB from Schematic” button (or Tools menu). Approve the changes. All your footprints will appear, likely in a jumbled pile. Move this pile off the board area for now.</li> <li><strong>Place Switches Automatically:</strong> <ul> <li>Click the <strong>Keyboard Placer</strong> plugin icon. <img src="keyboard-plugin.png" alt="Keyboard Placer Icon"/></li> <li><strong>Configure:</strong> <ul> <li>Browse and select your <strong>KLE <code class="language-plaintext highlighter-rouge">.json</code> file</strong>.</li> <li>Set the <strong>switch prefix</strong> to <strong>“S”</strong>.</li> <li><strong>IMPORTANT:</strong> Make sure <strong>diode placement options are OFF/disabled</strong> for this run.</li> <li>Click <strong>OK</strong>. <img src="kbplacer1.png" alt="Keyboard Placer Settings - Switches Only"/></li> </ul> </li> <li>The plugin will arrange <em>only the switch footprints</em> exactly matching your KLE layout. Magic!</li> </ul> </li> </ol> <h3 id="step-8-placing-diodes-with-precision">Step 8: Placing Diodes with Precision</h3> <p>We’ll place the diodes relative to the switches using the plugin again, but first, we need to manually position <em>one</em> diode as a template.</p> <ol> <li><strong>Position D1 Relative to S1:</strong> <ul> <li>Find the D1 footprint. (Tip: In the PCB editor, hover over an S1 pad and press <code class="language-plaintext highlighter-rouge">X</code> to highlight the connected net, which will include a pad on D1).</li> <li>Select D1, press <code class="language-plaintext highlighter-rouge">M</code> (Move), and position it near S1 where you want it (e.g., just above or below).</li> <li>Press <code class="language-plaintext highlighter-rouge">R</code> (Rotate) to orient it correctly (match the line on the footprint to the line on the schematic symbol).</li> <li>Press <code class="language-plaintext highlighter-rouge">F</code> (Flip) to move it to the back layer (<code class="language-plaintext highlighter-rouge">B.Cu</code>). This is common practice. <img src="switch-diode-position.png" alt="Switch and Diode Relative Position"/></li> </ul> </li> <li><strong>Place Remaining Diodes Automatically:</strong> <ul> <li>Run the <strong>Keyboard Placer</strong> plugin again.</li> <li><strong>Configure:</strong> <ul> <li>Keep the same <code class="language-plaintext highlighter-rouge">.json</code> file.</li> <li>This time, <strong>ENABLE diode placement options</strong>.</li> <li>Set the <strong>diode prefix</strong> to “D”.</li> <li>The plugin should use the relative position of D1 to S1 as a template for all others.</li> <li>Click <strong>OK</strong>. <img src="kbplacer2.png" alt="Keyboard Placer Settings - Diodes Enabled"/></li> </ul> </li> <li>All diodes should now snap into place relative to their corresponding switches.</li> </ul> </li> </ol> <h3 id="step-9-placing-remaining-components-manually">Step 9: Placing Remaining Components Manually</h3> <ol> <li><strong>Rotary Encoder (RE1):</strong> <ul> <li>Decide its exact location relative to nearby switches (e.g., centered between S14 and S15).</li> <li>Use the <strong>Measure Tool</strong> (<code class="language-plaintext highlighter-rouge">Ctrl+Shift+M</code>): Click the center of a reference switch (like S15), then click the approximate center of the RE1 footprint. Note the <code class="language-plaintext highlighter-rouge">dx</code> and <code class="language-plaintext highlighter-rouge">dy</code> distances in the status bar. <img src="measurement-tool.png" alt="Measurement Tool Example"/></li> <li>Select RE1, press <code class="language-plaintext highlighter-rouge">Shift+M</code> (Move Exactly), enter the measured <code class="language-plaintext highlighter-rouge">dx</code>/<code class="language-plaintext highlighter-rouge">dy</code> (watch the signs!), and click OK. You may need to adjust slightly or measure from a second reference point. <img src="pcb-arrangment1.png" alt="PCB Arrangement with Encoder"/></li> </ul> </li> <li><strong>Connector (J1):</strong> <ul> <li>Select J1, press <code class="language-plaintext highlighter-rouge">M</code>, and move it to your desired location (e.g., centered below the main key cluster, perhaps aligned vertically with a specific switch like S5). Use grid snapping or alignment tools. <img src="pcb-arrangment2.png" alt="PCB Arrangement with Connector"/></li> </ul> </li> <li><strong>Mounting Holes (H1-H4):</strong> <ul> <li>Select each hole (H1-H4), press <code class="language-plaintext highlighter-rouge">M</code>, and place them, typically near the corners or strategic points for case mounting. Ensure they don’t overlap traces or components.</li> </ul> </li> </ol> <h3 id="step-10-routing-the-traces-connecting-the-dots">Step 10: Routing the Traces (Connecting the Dots)</h3> <p>Now we draw the copper pathways (traces) connecting everything.</p> <ol> <li><strong>Select Tool:</strong> Choose the <strong>Route Tracks</strong> tool (<code class="language-plaintext highlighter-rouge">X</code> key).</li> <li><strong>Select Layer:</strong> Choose the layer to start on (e.g., <code class="language-plaintext highlighter-rouge">F.Cu</code> - front copper) in the Layers Manager panel.</li> <li><strong>Click and Route:</strong> Click on a component pad. KiCad highlights the corresponding pad(s) it needs to connect to (the “ratsnest” lines). Route the trace by clicking along the path, and finally click the destination pad.</li> <li><strong>Switch Layers:</strong> If you need to cross another trace, press <code class="language-plaintext highlighter-rouge">V</code> while routing. This places a <strong>Via</strong> (a plated hole connecting layers) and switches you to the other copper layer (<code class="language-plaintext highlighter-rouge">B.Cu</code> - back copper, usually). Press <code class="language-plaintext highlighter-rouge">V</code> again to switch back.</li> <li><strong>Connect Everything:</strong> Methodically connect all pads indicated by the ratsnest lines – rows, columns, encoder pins, connector pins. Aim for neat routes and avoid very sharp angles.</li> <li><strong>Check Status:</strong> Look at the bottom status bar. The “Unrouted” count <strong>must be 0</strong> when finished! <img src="wired-pcb.png" alt="Fully Routed PCB"/></li> </ol> <h3 id="step-11-defining-the-board-shape-edge-cuts">Step 11: Defining the Board Shape (Edge Cuts)</h3> <p>We need to tell the manufacturer where to cut the PCB.</p> <ol> <li><strong>Select Layer:</strong> In the Layers Manager, select the <strong>Edge.Cuts</strong> layer.</li> <li><strong>Draw Outline:</strong> Use the graphic tools (rectangle, line, arc) on the right toolbar to draw a <em>closed</em> shape around all your components and mounting holes. Leave a reasonable margin between the edge and any copper/components.</li> </ol> <hr/> <h2 id="phase-4-verification--manufacturing-prep">Phase 4: Verification &amp; Manufacturing Prep</h2> <p>Almost there! Just need to check our work and generate the files manufacturers need.</p> <h3 id="step-12-final-checks--exporting-gerbers">Step 12: Final Checks &amp; Exporting Gerbers</h3> <ol> <li><strong>Design Rule Checker (DRC):</strong> <ul> <li>Go to <strong>Inspect -&gt; Design Rules Checker</strong>. Click <strong>Run DRC</strong>.</li> <li>This checks for errors like traces too close, shorts, unconnected items, etc.</li> <li><strong>Fix any errors reported.</strong></li> <li><strong>Note:</strong> You might see clearance errors related specifically to the switch footprints (like my 82 hole clearance violations). These often relate to the large holes in the hotswap sockets and are usually <em>safe to ignore</em> if they only concern the switch holes themselves. Address all <em>other</em> DRC errors.</li> </ul> </li> <li><strong>3D Viewer:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">Alt+3</code> (or View -&gt; 3D Viewer). This gives a fantastic preview of your finished board. Check for any obvious physical conflicts.</li> </ul> </li> <li><strong>Generate Manufacturing Files (Gerbers &amp; Drill File):</strong> <ul> <li>Go to <strong>File -&gt; Plot…</strong>. <img src="export-pcb.png" alt="Plot/Export Icon"/></li> <li><strong>Layers:</strong> Ensure these layers are selected for plotting: <code class="language-plaintext highlighter-rouge">F.Cu</code>, <code class="language-plaintext highlighter-rouge">B.Cu</code>, <code class="language-plaintext highlighter-rouge">F.Mask</code>, <code class="language-plaintext highlighter-rouge">B.Mask</code>, <code class="language-plaintext highlighter-rouge">F.SilkS</code>, <code class="language-plaintext highlighter-rouge">B.SilkS</code>, <code class="language-plaintext highlighter-rouge">Edge.Cuts</code>. (Front/Back Copper, Solder Mask, Silkscreen, and the Outline).</li> <li><strong>Plot:</strong> Click <strong>Plot</strong>. This generates the Gerber files in a subfolder.</li> <li><strong>Generate Drill File:</strong> Click the <strong>Generate Drill Files…</strong> button in the Plot window. Use default settings and click <strong>Generate Drill File</strong>.</li> <li><strong>Package:</strong> Find the output folder containing all the generated <code class="language-plaintext highlighter-rouge">.gbr</code> and <code class="language-plaintext highlighter-rouge">.drl</code> files. Create a <strong>ZIP archive</strong> containing all of these files. This ZIP file is what you will upload to your chosen PCB manufacturer (like JLCPCB, PCBWay, etc.).</li> </ul> </li> </ol> <hr/> <h2 id="you-did-it-well-part-1">You Did It! (Well, Part 1)</h2> <p>Congratulations! You’ve successfully designed the switch daughterboard PCB for your custom keyboard. That’s a huge accomplishment!</p> <p>The next steps in the overall project would be:</p> <ol> <li>Designing the <strong>Main Logic Board</strong> PCB (to hold the microcontroller and connect to this daughterboard).</li> <li>Designing or choosing a <strong>Case</strong>.</li> <li><strong>Ordering</strong> the PCBs from a manufacturer using your Gerber ZIP file.</li> <li><strong>Sourcing</strong> components (switches, diodes, encoder, controller, keycaps, etc.).</li> <li><strong>Assembling</strong> the hardware.</li> <li><strong>Programming</strong> the firmware (using QMK or ZMK, for example).</li> </ol> <p>Take a break, celebrate this milestone, and get ready for the next phase of your custom keyboard adventure! Happy building!</p>]]></content><author><name></name></author><category term="post"/><summary type="html"><![CDATA[Make your own mechanical keyboard]]></summary></entry><entry><title type="html">Test</title><link href="https://siraxolott.github.io/blog/2025/test/" rel="alternate" type="text/html" title="Test"/><published>2025-04-21T00:00:00+00:00</published><updated>2025-04-21T00:00:00+00:00</updated><id>https://siraxolott.github.io/blog/2025/test</id><content type="html" xml:base="https://siraxolott.github.io/blog/2025/test/"><![CDATA[<p>fuck you keshav</p>]]></content><author><name></name></author><summary type="html"><![CDATA[fuck you keshav]]></summary></entry><entry><title type="html">a post with images</title><link href="https://siraxolott.github.io/blog/2015/images/" rel="alternate" type="text/html" title="a post with images"/><published>2015-05-15T21:01:00+00:00</published><updated>2015-05-15T21:01:00+00:00</updated><id>https://siraxolott.github.io/blog/2015/images</id><content type="html" xml:base="https://siraxolott.github.io/blog/2015/images/"><![CDATA[<p>This is an example post with image galleries.</p> <div class="row mt-3"> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/9-480.webp 480w,/assets/img/9-800.webp 800w,/assets/img/9-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/9.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/7-480.webp 480w,/assets/img/7-800.webp 800w,/assets/img/7-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/7.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> </div> <div class="caption"> A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all. </div> <p>Images can be made zoomable. Simply add <code class="language-plaintext highlighter-rouge">data-zoomable</code> to <code class="language-plaintext highlighter-rouge">&lt;img&gt;</code> tags that you want to make zoomable.</p> <div class="row mt-3"> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/8-480.webp 480w,/assets/img/8-800.webp 800w,/assets/img/8-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/8.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/10-480.webp 480w,/assets/img/10-800.webp 800w,/assets/img/10-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/10.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> </div> <p>The rest of the images in this post are all zoomable, arranged into different mini-galleries.</p> <div class="row mt-3"> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/11-480.webp 480w,/assets/img/11-800.webp 800w,/assets/img/11-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/11.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="lazy" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/12-480.webp 480w,/assets/img/12-800.webp 800w,/assets/img/12-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/12.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="lazy" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/7-480.webp 480w,/assets/img/7-800.webp 800w,/assets/img/7-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/7.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="lazy" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> </div>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="images"/><summary type="html"><![CDATA[this is what included images could look like]]></summary></entry></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="https://siraxolott.github.io/feed.xml" rel="self" type="application/atom+xml"/><link href="https://siraxolott.github.io/" rel="alternate" type="text/html" hreflang="en"/><updated>2025-04-23T21:59:01+00:00</updated><id>https://siraxolott.github.io/feed.xml</id><title type="html">blank</title><subtitle>A simple, whitespace theme for academics. Based on [*folio](https://github.com/bogoli/-folio) design. </subtitle><entry><title type="html">DIY Mechanical Keyboard Part 1</title><link href="https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard/" rel="alternate" type="text/html" title="DIY Mechanical Keyboard Part 1"/><published>2025-04-22T00:00:00+00:00</published><updated>2025-04-22T00:00:00+00:00</updated><id>https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard</id><content type="html" xml:base="https://siraxolott.github.io/blog/2025/diy-mechanical-keyboard/"><![CDATA[<h1 id="your-first-custom-keyboard-pcb-a-step-by-step-guide">Your First Custom Keyboard PCB: A Step-by-Step Guide</h1> <p>So, you’re ready to ditch the off-the-shelf options and build a keyboard that’s <em>truly</em> yours? Awesome! Designing your own Printed Circuit Board (PCB) is a hugely rewarding part of the custom keyboard hobby. It might seem daunting initially, but breaking it down step-by-step makes it manageable.</p> <p>This guide walks through my process for designing the <strong>Switch Daughterboard</strong> – the part that holds the keyswitches – using KiCad, a fantastic free and open-source tool. I opted for a two-board design: this Switch Daughterboard connects to a separate Main Logic Board housing the microcontroller (like a Raspberry Pi Pico). Why? Using a pre-made dev board saves complexity, but putting it directly on the main switch PCB would make the keyboard unnecessarily large. Stacking them keeps things compact!</p> <p>Ready? Let’s dive in!</p> <hr/> <h2 id="phase-1-planning-your-perfect-layout">Phase 1: Planning Your Perfect Layout</h2> <p>Before touching any software, we need a clear plan.</p> <h3 id="step-1-define-your-vision-features--form-factor">Step 1: Define Your Vision (Features &amp; Form Factor)</h3> <p>What kind of keyboard do you want?</p> <ul> <li><strong>Size/Layout:</strong> Full-size? Tenkeyless (TKL)? Compact 60%? Something unique like an Alice layout?</li> <li><strong>Special Features:</strong> Want a rotary encoder (knob) for volume? An OLED screen? RGB LEDs? Extra macro keys?</li> </ul> <p>Think about the core experience you want. For my first build, I aimed for a compact layout similar to a Keycool 84 but added a rotary encoder for volume control. Starting slightly simpler is often wise!</p> <h3 id="step-2-design-the-physical-layout-with-kle">Step 2: Design the Physical Layout with KLE</h3> <p>The <strong>Keyboard Layout Editor (KLE)</strong> (<a href="https://www.keyboard-layout-editor.com/">https://www.keyboard-layout-editor.com/</a>) is the standard tool for visualizing and defining your physical key arrangement.</p> <ol> <li><strong>Visit KLE:</strong> Open the website.</li> <li><strong>Start Designing:</strong> You can start from scratch or load a template via the <strong>Preset</strong> menu. (I started with the <strong>Keycool 84</strong> preset and modified it).</li> <li><strong>Customize:</strong> Arrange keys, adjust their sizes, and add labels. <ul> <li><strong>Key Properties:</strong> Use the properties panel or the raw data tab. Properties like <code class="language-plaintext highlighter-rouge">{w:2}</code> define width, <code class="language-plaintext highlighter-rouge">{x:0.25}</code> adds horizontal spacing, <code class="language-plaintext highlighter-rouge">{a:4}</code> changes legend alignment. Study the syntax!</li> <li><strong>My Layout:</strong> I specifically left space in the top-left for my rotary encoder. <img src="keyboard-layout.png" alt="Keyboard Layout"/></li> </ul> </li> </ol> <div class="row mt-3"> <div class="col-sm mt-3 mt-md-0"> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/keyboard-layout-480.webp 480w,/assets/img/keyboard-layout-800.webp 800w,/assets/img/keyboard-layout-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/keyboard-layout.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </div> </div> <div class="caption"> A simple, elegant caption looks good between image rows, after each row, or doesn't have to be there at all. </div> <ol> <li><strong>Export:</strong> Crucially, export your layout in <strong>TWO formats</strong>: <ul> <li><strong><code class="language-plaintext highlighter-rouge">.json</code> file:</strong> This contains the precise positional data we’ll use later for placing components. (<a href="keyboard-layout.json">My JSON for reference</a>)</li> <li><strong><code class="language-plaintext highlighter-rouge">.png</code> file:</strong> A visual reference helpful during the process.</li> </ul> </li> </ol> <h3 id="step-3-plan-your-electrical-matrix">Step 3: Plan Your Electrical Matrix</h3> <p>Underneath the keycaps, keyboards use a grid (matrix) of rows and columns to detect keypresses. When you press a key, it connects a specific row wire to a specific column wire, telling the microcontroller which key was activated.</p> <ul> <li><strong>Visualize the Grid:</strong> Look at your KLE layout PNG. Mentally (or physically, if you print it) overlay a grid connecting the <em>centers</em> of the keys. You decide how many rows and columns you need. Fewer rows/columns mean fewer pins required on your microcontroller, but the wiring can sometimes be more complex.</li> <li><strong>My Grid:</strong> Here’s how I mapped out my rows and columns, assigning numbers starting from 0. Notice how the rotary encoder’s <em>switch</em> function also occupies a spot in the matrix (Row 0, Col 15 in my case). <img src="keyboard-matrix.jpeg" alt="Keyboard Matrix Grid"/></li> <li><strong>Count Connections:</strong> Note down the number of rows and columns. You’ll also need connections for your encoder’s rotation pins (A &amp; B) and ground (GND). This count determines the size of the connector between the daughterboard and the main logic board.</li> </ul> <hr/> <h2 id="phase-2-schematic-design-in-kicad">Phase 2: Schematic Design in KiCad</h2> <p>Now, let’s translate our plan into an electrical blueprint using KiCad.</p> <h3 id="step-4-kicad-setup-installation--resources">Step 4: KiCad Setup (Installation &amp; Resources)</h3> <ol> <li><strong>Install KiCad:</strong> Download and install it from the official website: <a href="https://www.kicad.org/download/">https://www.kicad.org/download/</a></li> <li><strong>Get Essential Libraries:</strong> We need specific symbols (schematic representation) and footprints (PCB land pattern) for keyboard parts. <ul> <li>Download the <strong>‘ScottoKicad’ library</strong> files from <a href="https://github.com/joe-scotto/scottokeebs/tree/main/Extras/ScottoKicad">here</a>. Follow the instructions on that page to add them to KiCad’s library manager. This gives us nice placeholder symbols and other useful bits.</li> </ul> </li> <li><strong>Install Helpful Plugins:</strong> Use KiCad’s <strong>Plugin and Content Manager</strong> (Tools -&gt; Plugin and Content Manager) to install: <ul> <li><code class="language-plaintext highlighter-rouge">Fabrication Toolkit</code>: Useful for generating manufacturing files later.</li> <li><code class="language-plaintext highlighter-rouge">Keyswitch Kicad Library</code>: Provides many switch footprints.</li> <li><code class="language-plaintext highlighter-rouge">Keyboard footprints placer</code>: <em>Essential</em> for accurately placing switches and diodes based on your KLE file. <img src="plugin-content-manager-ss.png" alt="KiCad Plugin Manager"/></li> </ul> </li> </ol> <h3 id="step-5-building-the-switch-daughterboard-schematic">Step 5: Building the Switch Daughterboard Schematic</h3> <ol> <li><strong>Create Project:</strong> Start a new KiCad project for your Switch Daughterboard. Open the schematic file (<code class="language-plaintext highlighter-rouge">&lt;project_name&gt;.kicad_sch</code>).</li> <li><strong>Place Basic Unit:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code> (Add Symbol).</li> <li>Add <code class="language-plaintext highlighter-rouge">Placeholder_Keyswitch</code> and <code class="language-plaintext highlighter-rouge">Placeholder_Diode</code> (from the <code class="language-plaintext highlighter-rouge">scottokeebs</code> library).</li> <li>Arrange them. The diode prevents “ghosting” (false keypresses). We’ll connect one switch pin to the column, and the diode connects the other pin to the row. <img src="unitcell.png" alt="Single Switch/Diode Unit"/></li> </ul> </li> <li><strong>Replicate for the Matrix:</strong> <ul> <li>Select the switch and diode pair.</li> <li>Copy (<code class="language-plaintext highlighter-rouge">Ctrl+C</code>) and Paste (<code class="language-plaintext highlighter-rouge">Ctrl+V</code>) this unit for <em>every single key</em> in your layout. Arrange them roughly mirroring your planned grid (from Step 3).</li> <li><strong>Crucially:</strong> Ensure the reference designators (S1, D1, S2, D2…) are sequential and without gaps. The placement plugin relies on this! <img src="schematic-matrix.png" alt="Full Schematic Matrix Layout"/></li> </ul> </li> <li><strong>Wire Rows &amp; Columns:</strong> <ul> <li>Use the Wire tool (<code class="language-plaintext highlighter-rouge">W</code>).</li> <li>Connect the designated switch pins together for each column.</li> <li>Connect the diodes together for each row.</li> <li>Add Global Labels (<code class="language-plaintext highlighter-rouge">Ctrl+L</code>): Label each row line (e.g., <code class="language-plaintext highlighter-rouge">ROW0</code>, <code class="language-plaintext highlighter-rouge">ROW1</code>…) and each column line (e.g., <code class="language-plaintext highlighter-rouge">COL0</code>, <code class="language-plaintext highlighter-rouge">COL1</code>…) according to your plan from Step 3. <img src="column-row-matrix.png" alt="Wired and Labeled Matrix"/></li> </ul> </li> <li><strong>Add Rotary Encoder:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code>, find and add <code class="language-plaintext highlighter-rouge">RotaryEncoder_Switch</code>.</li> <li>Wire it: <ul> <li>Pins <code class="language-plaintext highlighter-rouge">A</code> and <code class="language-plaintext highlighter-rouge">B</code> (rotation): Connect to global labels <code class="language-plaintext highlighter-rouge">PIN_A</code> and <code class="language-plaintext highlighter-rouge">PIN_B</code>.</li> <li>Common pin (<code class="language-plaintext highlighter-rouge">C</code>): Connect to a <code class="language-plaintext highlighter-rouge">GND</code> power symbol (add one if needed).</li> <li>Switch pins (<code class="language-plaintext highlighter-rouge">S1</code>, <code class="language-plaintext highlighter-rouge">S2</code>): Connect these <em>directly</em> into your matrix like any other switch. I connected mine to <code class="language-plaintext highlighter-rouge">ROW0</code> and <code class="language-plaintext highlighter-rouge">COL15</code>.</li> <li>Add a <code class="language-plaintext highlighter-rouge">GND</code> global label to the ground connection as well. <img src="rotaryencoder-switch.png" alt="Rotary Encoder Wiring"/></li> </ul> </li> </ul> </li> <li><strong>Add Daughterboard Connector:</strong> <ul> <li><strong>Calculate Pins:</strong> Sum your rows + columns + encoder pins (<code class="language-plaintext highlighter-rouge">PIN_A</code>, <code class="language-plaintext highlighter-rouge">PIN_B</code>, <code class="language-plaintext highlighter-rouge">GND</code>). (My calculation: 16 cols + 6 rows + 3 encoder = 25 pins).</li> <li><strong>Choose Connector:</strong> Select a standard header size that fits your pin count. A 2xN pin header is common. I chose a 2x13 (26 pins) for some spare capacity, using the <code class="language-plaintext highlighter-rouge">Conn_02x13_Odd_Even</code> symbol.</li> <li><strong>Place &amp; Wire:</strong> Add the connector symbol (<code class="language-plaintext highlighter-rouge">A</code> key). Wire each pin to the corresponding global label (<code class="language-plaintext highlighter-rouge">ROW0</code>, <code class="language-plaintext highlighter-rouge">COL0</code>, <code class="language-plaintext highlighter-rouge">PIN_A</code>, <code class="language-plaintext highlighter-rouge">GND</code>, etc.). Plan a logical pinout. <img src="connector-daughterboard.png" alt="Daughterboard Connector Wiring"/></li> </ul> </li> <li><strong>Add Mounting Holes:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">A</code>, add four <code class="language-plaintext highlighter-rouge">MountingHole</code> symbols. These will be used to screw the PCB into a case.</li> </ul> </li> </ol> <h3 id="step-6-assigning-physical-footprints">Step 6: Assigning Physical Footprints</h3> <p>Now we link each schematic symbol to its physical counterpart on the PCB.</p> <ol> <li><strong>Open Tool:</strong> Click the “Assign PCB footprints…” button on the top toolbar. <img src="assign-footprint-button.png" alt="Assign Footprint Button"/></li> <li><strong>Assign Footprints Window:</strong> <img src="assign-footprint.png" alt="Assign Footprint Window"/></li> <li><strong>Diodes:</strong> <ul> <li>Filter by <code class="language-plaintext highlighter-rouge">ScottoKeebs_Components</code> library (left pane).</li> <li>Select all Diodes (D1, D2…) in the center pane.</li> <li>Find and double-click <code class="language-plaintext highlighter-rouge">Diode_SOD-123</code> in the right pane.</li> </ul> </li> <li><strong>Switches (Multi-step):</strong> <ul> <li><strong>Default:</strong> Filter by <code class="language-plaintext highlighter-rouge">PCM_Switch_Keyboard_Hotswap_Kailh</code>. Select <em>all</em> Switches (S1, S2…) in the center pane. Assign the standard 1u footprint: <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_1.00u</code>.</li> <li><strong>Custom Widths:</strong> <strong>Refer back to your KLE <code class="language-plaintext highlighter-rouge">.json</code> file!</strong> Find keys with non-1 <code class="language-plaintext highlighter-rouge">"w"</code> values. Note the key’s position and correlate it to the correct S# in your schematic.</li> <li><strong>Assign Specifics:</strong> Select <em>each non-1u switch individually</em> (e.g., S73). Find and assign the corresponding footprint based on its width (e.g., <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_1.25u</code>, <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_2.00u</code>, <code class="language-plaintext highlighter-rouge">SW_Hotswap_Kailh_MX_Plated_6.25u</code> for spacebar, etc.). <ul> <li><em>My Specifics:</em> <ul> <li>S73,74,75=1.25u;</li> <li>S30,43=1.50u;</li> <li>S45,70=1.75u;</li> <li>S28=2.00u;</li> <li>S57,59=2.25u;</li> <li>S76=6.25u.</li> </ul> </li> </ul> </li> </ul> </li> <li><strong>Rotary Encoder:</strong> <ul> <li>Select the encoder symbol (RE1). Filter by <code class="language-plaintext highlighter-rouge">Rotary_Encoder</code> library. Assign <code class="language-plaintext highlighter-rouge">RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm_CircularMountingHoles</code>.</li> </ul> </li> <li><strong>Connector:</strong> <ul> <li>Select the connector symbol (J1). Filter by <code class="language-plaintext highlighter-rouge">Connector_PinSocket_2.54mm</code>. Assign the corresponding size, e.g., <code class="language-plaintext highlighter-rouge">PinSocket_2x13_P2.54mm_Vertical</code>. (P2.54mm is the standard 0.1” pitch).</li> </ul> </li> <li><strong>Mounting Holes:</strong> <ul> <li>Select the mounting hole symbols (H1-H4). Filter by <code class="language-plaintext highlighter-rouge">MountingHole</code>. Assign <code class="language-plaintext highlighter-rouge">MountingHole_4.3mm_M4</code> (for M4 screws) or <code class="language-plaintext highlighter-rouge">MountingHole_3.2mm_M3</code> (for M3). Choose based on your planned case hardware.</li> </ul> </li> </ol> <p>Click <strong>OK</strong> to save assignments. The schematic is logically complete!</p> <hr/> <h2 id="phase-3-pcb-layout-in-kicad">Phase 3: PCB Layout in KiCad</h2> <p>Time to arrange the physical components on the board.</p> <h3 id="step-7-initial-pcb-setup--switch-placement">Step 7: Initial PCB Setup &amp; Switch Placement</h3> <ol> <li><strong>Open PCB Editor:</strong> Go back to the main KiCad project window and open the <code class="language-plaintext highlighter-rouge">&lt;project_name&gt;.kicad_pcb</code> file.</li> <li><strong>Update from Schematic:</strong> Click the “Update PCB from Schematic” button (or Tools menu). Approve the changes. All your footprints will appear, likely in a jumbled pile. Move this pile off the board area for now.</li> <li><strong>Place Switches Automatically:</strong> <ul> <li>Click the <strong>Keyboard Placer</strong> plugin icon. <img src="keyboard-plugin.png" alt="Keyboard Placer Icon"/></li> <li><strong>Configure:</strong> <ul> <li>Browse and select your <strong>KLE <code class="language-plaintext highlighter-rouge">.json</code> file</strong>.</li> <li>Set the <strong>switch prefix</strong> to <strong>“S”</strong>.</li> <li><strong>IMPORTANT:</strong> Make sure <strong>diode placement options are OFF/disabled</strong> for this run.</li> <li>Click <strong>OK</strong>. <img src="kbplacer1.png" alt="Keyboard Placer Settings - Switches Only"/></li> </ul> </li> <li>The plugin will arrange <em>only the switch footprints</em> exactly matching your KLE layout. Magic!</li> </ul> </li> </ol> <h3 id="step-8-placing-diodes-with-precision">Step 8: Placing Diodes with Precision</h3> <p>We’ll place the diodes relative to the switches using the plugin again, but first, we need to manually position <em>one</em> diode as a template.</p> <ol> <li><strong>Position D1 Relative to S1:</strong> <ul> <li>Find the D1 footprint. (Tip: In the PCB editor, hover over an S1 pad and press <code class="language-plaintext highlighter-rouge">X</code> to highlight the connected net, which will include a pad on D1).</li> <li>Select D1, press <code class="language-plaintext highlighter-rouge">M</code> (Move), and position it near S1 where you want it (e.g., just above or below).</li> <li>Press <code class="language-plaintext highlighter-rouge">R</code> (Rotate) to orient it correctly (match the line on the footprint to the line on the schematic symbol).</li> <li>Press <code class="language-plaintext highlighter-rouge">F</code> (Flip) to move it to the back layer (<code class="language-plaintext highlighter-rouge">B.Cu</code>). This is common practice. <img src="switch-diode-position.png" alt="Switch and Diode Relative Position"/></li> </ul> </li> <li><strong>Place Remaining Diodes Automatically:</strong> <ul> <li>Run the <strong>Keyboard Placer</strong> plugin again.</li> <li><strong>Configure:</strong> <ul> <li>Keep the same <code class="language-plaintext highlighter-rouge">.json</code> file.</li> <li>This time, <strong>ENABLE diode placement options</strong>.</li> <li>Set the <strong>diode prefix</strong> to “D”.</li> <li>The plugin should use the relative position of D1 to S1 as a template for all others.</li> <li>Click <strong>OK</strong>. <img src="kbplacer2.png" alt="Keyboard Placer Settings - Diodes Enabled"/></li> </ul> </li> <li>All diodes should now snap into place relative to their corresponding switches.</li> </ul> </li> </ol> <h3 id="step-9-placing-remaining-components-manually">Step 9: Placing Remaining Components Manually</h3> <ol> <li><strong>Rotary Encoder (RE1):</strong> <ul> <li>Decide its exact location relative to nearby switches (e.g., centered between S14 and S15).</li> <li>Use the <strong>Measure Tool</strong> (<code class="language-plaintext highlighter-rouge">Ctrl+Shift+M</code>): Click the center of a reference switch (like S15), then click the approximate center of the RE1 footprint. Note the <code class="language-plaintext highlighter-rouge">dx</code> and <code class="language-plaintext highlighter-rouge">dy</code> distances in the status bar. <img src="measurement-tool.png" alt="Measurement Tool Example"/></li> <li>Select RE1, press <code class="language-plaintext highlighter-rouge">Shift+M</code> (Move Exactly), enter the measured <code class="language-plaintext highlighter-rouge">dx</code>/<code class="language-plaintext highlighter-rouge">dy</code> (watch the signs!), and click OK. You may need to adjust slightly or measure from a second reference point. <img src="pcb-arrangment1.png" alt="PCB Arrangement with Encoder"/></li> </ul> </li> <li><strong>Connector (J1):</strong> <ul> <li>Select J1, press <code class="language-plaintext highlighter-rouge">M</code>, and move it to your desired location (e.g., centered below the main key cluster, perhaps aligned vertically with a specific switch like S5). Use grid snapping or alignment tools. <img src="pcb-arrangment2.png" alt="PCB Arrangement with Connector"/></li> </ul> </li> <li><strong>Mounting Holes (H1-H4):</strong> <ul> <li>Select each hole (H1-H4), press <code class="language-plaintext highlighter-rouge">M</code>, and place them, typically near the corners or strategic points for case mounting. Ensure they don’t overlap traces or components.</li> </ul> </li> </ol> <h3 id="step-10-routing-the-traces-connecting-the-dots">Step 10: Routing the Traces (Connecting the Dots)</h3> <p>Now we draw the copper pathways (traces) connecting everything.</p> <ol> <li><strong>Select Tool:</strong> Choose the <strong>Route Tracks</strong> tool (<code class="language-plaintext highlighter-rouge">X</code> key).</li> <li><strong>Select Layer:</strong> Choose the layer to start on (e.g., <code class="language-plaintext highlighter-rouge">F.Cu</code> - front copper) in the Layers Manager panel.</li> <li><strong>Click and Route:</strong> Click on a component pad. KiCad highlights the corresponding pad(s) it needs to connect to (the “ratsnest” lines). Route the trace by clicking along the path, and finally click the destination pad.</li> <li><strong>Switch Layers:</strong> If you need to cross another trace, press <code class="language-plaintext highlighter-rouge">V</code> while routing. This places a <strong>Via</strong> (a plated hole connecting layers) and switches you to the other copper layer (<code class="language-plaintext highlighter-rouge">B.Cu</code> - back copper, usually). Press <code class="language-plaintext highlighter-rouge">V</code> again to switch back.</li> <li><strong>Connect Everything:</strong> Methodically connect all pads indicated by the ratsnest lines – rows, columns, encoder pins, connector pins. Aim for neat routes and avoid very sharp angles.</li> <li><strong>Check Status:</strong> Look at the bottom status bar. The “Unrouted” count <strong>must be 0</strong> when finished! <img src="wired-pcb.png" alt="Fully Routed PCB"/></li> </ol> <h3 id="step-11-defining-the-board-shape-edge-cuts">Step 11: Defining the Board Shape (Edge Cuts)</h3> <p>We need to tell the manufacturer where to cut the PCB.</p> <ol> <li><strong>Select Layer:</strong> In the Layers Manager, select the <strong>Edge.Cuts</strong> layer.</li> <li><strong>Draw Outline:</strong> Use the graphic tools (rectangle, line, arc) on the right toolbar to draw a <em>closed</em> shape around all your components and mounting holes. Leave a reasonable margin between the edge and any copper/components.</li> </ol> <hr/> <h2 id="phase-4-verification--manufacturing-prep">Phase 4: Verification &amp; Manufacturing Prep</h2> <p>Almost there! Just need to check our work and generate the files manufacturers need.</p> <h3 id="step-12-final-checks--exporting-gerbers">Step 12: Final Checks &amp; Exporting Gerbers</h3> <ol> <li><strong>Design Rule Checker (DRC):</strong> <ul> <li>Go to <strong>Inspect -&gt; Design Rules Checker</strong>. Click <strong>Run DRC</strong>.</li> <li>This checks for errors like traces too close, shorts, unconnected items, etc.</li> <li><strong>Fix any errors reported.</strong></li> <li><strong>Note:</strong> You might see clearance errors related specifically to the switch footprints (like my 82 hole clearance violations). These often relate to the large holes in the hotswap sockets and are usually <em>safe to ignore</em> if they only concern the switch holes themselves. Address all <em>other</em> DRC errors.</li> </ul> </li> <li><strong>3D Viewer:</strong> <ul> <li>Press <code class="language-plaintext highlighter-rouge">Alt+3</code> (or View -&gt; 3D Viewer). This gives a fantastic preview of your finished board. Check for any obvious physical conflicts.</li> </ul> </li> <li><strong>Generate Manufacturing Files (Gerbers &amp; Drill File):</strong> <ul> <li>Go to <strong>File -&gt; Plot…</strong>. <img src="export-pcb.png" alt="Plot/Export Icon"/></li> <li><strong>Layers:</strong> Ensure these layers are selected for plotting: <code class="language-plaintext highlighter-rouge">F.Cu</code>, <code class="language-plaintext highlighter-rouge">B.Cu</code>, <code class="language-plaintext highlighter-rouge">F.Mask</code>, <code class="language-plaintext highlighter-rouge">B.Mask</code>, <code class="language-plaintext highlighter-rouge">F.SilkS</code>, <code class="language-plaintext highlighter-rouge">B.SilkS</code>, <code class="language-plaintext highlighter-rouge">Edge.Cuts</code>. (Front/Back Copper, Solder Mask, Silkscreen, and the Outline).</li> <li><strong>Plot:</strong> Click <strong>Plot</strong>. This generates the Gerber files in a subfolder.</li> <li><strong>Generate Drill File:</strong> Click the <strong>Generate Drill Files…</strong> button in the Plot window. Use default settings and click <strong>Generate Drill File</strong>.</li> <li><strong>Package:</strong> Find the output folder containing all the generated <code class="language-plaintext highlighter-rouge">.gbr</code> and <code class="language-plaintext highlighter-rouge">.drl</code> files. Create a <strong>ZIP archive</strong> containing all of these files. This ZIP file is what you will upload to your chosen PCB manufacturer (like JLCPCB, PCBWay, etc.).</li> </ul> </li> </ol> <hr/> <h2 id="you-did-it-well-part-1">You Did It! (Well, Part 1)</h2> <p>Congratulations! You’ve successfully designed the switch daughterboard PCB for your custom keyboard. That’s a huge accomplishment!</p> <p>The next steps in the overall project would be:</p> <ol> <li>Designing the <strong>Main Logic Board</strong> PCB (to hold the microcontroller and connect to this daughterboard).</li> <li>Designing or choosing a <strong>Case</strong>.</li> <li><strong>Ordering</strong> the PCBs from a manufacturer using your Gerber ZIP file.</li> <li><strong>Sourcing</strong> components (switches, diodes, encoder, controller, keycaps, etc.).</li> <li><strong>Assembling</strong> the hardware.</li> <li><strong>Programming</strong> the firmware (using QMK or ZMK, for example).</li> </ol> <p>Take a break, celebrate this milestone, and get ready for the next phase of your custom keyboard adventure! Happy building!</p>]]></content><author><name></name></author><category term="post"/><summary type="html"><![CDATA[Make your own mechanical keyboard]]></summary></entry><entry><title type="html">Test</title><link href="https://siraxolott.github.io/blog/2025/test/" rel="alternate" type="text/html" title="Test"/><published>2025-04-21T00:00:00+00:00</published><updated>2025-04-21T00:00:00+00:00</updated><id>https://siraxolott.github.io/blog/2025/test</id><content type="html" xml:base="https://siraxolott.github.io/blog/2025/test/"><![CDATA[<p>fuck you keshav</p>]]></content><author><name></name></author><summary type="html"><![CDATA[fuck you keshav]]></summary></entry><entry><title type="html">a post with plotly.js</title><link href="https://siraxolott.github.io/blog/2025/plotly/" rel="alternate" type="text/html" title="a post with plotly.js"/><published>2025-03-26T14:24:00+00:00</published><updated>2025-03-26T14:24:00+00:00</updated><id>https://siraxolott.github.io/blog/2025/plotly</id><content type="html" xml:base="https://siraxolott.github.io/blog/2025/plotly/"><![CDATA[<p>This is an example post with some <a href="https://plotly.com/javascript/">plotly</a> code.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">plotly
+</span><span class="sb">{
+  "data": [
+    {
+      "x": [1, 2, 3, 4],
+      "y": [10, 15, 13, 17],
+      "type": "scatter"
+    },
+    {
+      "x": [1, 2, 3, 4],
+      "y": [16, 5, 11, 9],
+      "type": "scatter"
+    }
+  ]
+}</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>Which generates:</p> <pre><code class="language-plotly">{
+  "data": [
+    {
+      "x": [1, 2, 3, 4],
+      "y": [10, 15, 13, 17],
+      "type": "scatter"
+    },
+    {
+      "x": [1, 2, 3, 4],
+      "y": [16, 5, 11, 9],
+      "type": "scatter"
+    }
+  ]
+}
+</code></pre> <p>Also another example chart.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">plotly
+</span><span class="sb">{
+  "data": [
+    {
+      "x": [1, 2, 3, 4],
+      "y": [10, 15, 13, 17],
+      "mode": "markers"
+    },
+    {
+      "x": [2, 3, 4, 5],
+      "y": [16, 5, 11, 9],
+      "mode": "lines"
+    },
+    {
+      "x": [1, 2, 3, 4],
+      "y": [12, 9, 15, 12],
+      "mode": "lines+markers"
+    }
+  ],
+  "layout": {
+    "title": {
+      "text": "Line and Scatter Plot"
+    }
+  }
+}</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>This is how it looks like:</p> <pre><code class="language-plotly">{
+  "data": [
+    {
+      "x": [1, 2, 3, 4],
+      "y": [10, 15, 13, 17],
+      "mode": "markers"
+    },
+    {
+      "x": [2, 3, 4, 5],
+      "y": [16, 5, 11, 9],
+      "mode": "lines"
+    },
+    {
+      "x": [1, 2, 3, 4],
+      "y": [12, 9, 15, 12],
+      "mode": "lines+markers"
+    }
+  ],
+  "layout": {
+    "title": {
+      "text": "Line and Scatter Plot"
+    }
+  }
+}
+</code></pre>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="charts"/><summary type="html"><![CDATA[this is what included plotly.js code could look like]]></summary></entry><entry><title type="html">a post with image galleries</title><link href="https://siraxolott.github.io/blog/2024/photo-gallery/" rel="alternate" type="text/html" title="a post with image galleries"/><published>2024-12-04T01:59:00+00:00</published><updated>2024-12-04T01:59:00+00:00</updated><id>https://siraxolott.github.io/blog/2024/photo-gallery</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/photo-gallery/"><![CDATA[<p>The images in this post are all zoomable, arranged into different mini-galleries using different libraries.</p> <h2 id="lightbox2"><a href="https://lokeshdhakar.com/projects/lightbox2/">Lightbox2</a></h2> <p><a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-2500.jpg" data-lightbox="roadtrip"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-200.jpg"/></a> <a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-2500.jpg" data-lightbox="roadtrip"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-200.jpg"/></a> <a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-2500.jpg" data-lightbox="roadtrip"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-200.jpg"/></a></p> <hr/> <h2 id="photoswipe"><a href="https://photoswipe.com/">PhotoSwipe</a></h2> <div class="pswp-gallery pswp-gallery--single-column" id="gallery--getting-started"> <a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-2500.jpg" data-pswp-width="1669" data-pswp-height="2500" target="_blank"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-200.jpg" alt=""/> </a> <a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/7/img-2500.jpg" data-pswp-width="1875" data-pswp-height="2500" data-cropped="true" target="_blank"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/7/img-200.jpg" alt=""/> </a> <a href="https://unsplash.com" data-pswp-src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-2500.jpg" data-pswp-width="2500" data-pswp-height="1666" target="_blank"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-200.jpg" alt=""/> </a> <div> <a href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/6/img-2500.jpg" data-pswp-width="2500" data-pswp-height="1667" target="_blank"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/6/img-200.jpg" alt=""/> </a> </div> </div> <hr/> <h2 id="spotlight-js"><a href="https://nextapps-de.github.io/spotlight/">Spotlight JS</a></h2> <div class="spotlight-group"> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-200.jpg"/> </a> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-200.jpg"/> </a> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-200.jpg"/> </a> </div> <div class="spotlight-group"> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/4/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/4/img-200.jpg"/> </a> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/5/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/5/img-200.jpg"/> </a> <a class="spotlight" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/6/img-2500.jpg"> <img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/6/img-200.jpg"/> </a> </div> <hr/> <h2 id="venobox"><a href="https://veno.es/venobox/">Venobox</a></h2> <p><a class="venobox" data-gall="myGallery" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-2500.jpg"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/1/img-200.jpg"/></a> <a class="venobox" data-gall="myGallery" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-2500.jpg"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/2/img-200.jpg"/></a> <a class="venobox" data-gall="myGallery" href="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-2500.jpg"><img src="https://cdn.photoswipe.com/photoswipe-demo-images/photos/3/img-200.jpg"/></a></p>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="images"/><summary type="html"><![CDATA[this is what included image galleries could look like]]></summary></entry><entry><title type="html">a post with tabs</title><link href="https://siraxolott.github.io/blog/2024/tabs/" rel="alternate" type="text/html" title="a post with tabs"/><published>2024-05-01T00:32:13+00:00</published><updated>2024-05-01T00:32:13+00:00</updated><id>https://siraxolott.github.io/blog/2024/tabs</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/tabs/"><![CDATA[<p>This is how a post with <a href="https://github.com/Ovski4/jekyll-tabs">tabs</a> looks like. Note that the tabs could be used for different purposes, not only for code.</p> <h2 id="first-tabs">First tabs</h2> <p>To add tabs, use the following syntax:</p> <div class="language-liquid highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">{%</span><span class="w"> </span><span class="nt">tabs</span><span class="w"> </span><span class="nv">group-name</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">tab</span><span class="w"> </span><span class="nv">group-name</span><span class="w"> </span><span class="nv">tab-name-1</span><span class="w"> </span><span class="cp">%}</span>
+
+Content 1
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endtab</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">tab</span><span class="w"> </span><span class="nv">group-name</span><span class="w"> </span><span class="nv">tab-name-2</span><span class="w"> </span><span class="cp">%}</span>
+
+Content 2
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endtab</span><span class="w"> </span><span class="cp">%}</span>
+
+<span class="cp">{%</span><span class="w"> </span><span class="nt">endtabs</span><span class="w"> </span><span class="cp">%}</span>
+</code></pre></div></div> <p>With this you can generate visualizations like:</p> <ul id="log" class="tab" data-tab="6fd8c597-2be8-4c37-8fe8-b48bc4b7180a" data-name="log"> <li class="active" id="log-php"> <a href="#">php </a> </li> <li id="log-js"> <a href="#">js </a> </li> <li id="log-ruby"> <a href="#">ruby </a> </li> </ul> <ul class="tab-content" id="6fd8c597-2be8-4c37-8fe8-b48bc4b7180a" data-name="log"> <li class="active"> <div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">var_dump</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span>
+</code></pre></div></div> </li> <li> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">hello</span><span class="dl">"</span><span class="p">);</span>
+</code></pre></div></div> </li> <li> <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">pputs</span> <span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span>
+</code></pre></div></div> </li> </ul> <h2 id="another-example">Another example</h2> <ul id="data-struct" class="tab" data-tab="2babb7e4-291a-4cac-ab93-2ec2ee3ce2f9" data-name="data-struct"> <li class="active" id="data-struct-yaml"> <a href="#">yaml </a> </li> <li id="data-struct-json"> <a href="#">json </a> </li> </ul> <ul class="tab-content" id="2babb7e4-291a-4cac-ab93-2ec2ee3ce2f9" data-name="data-struct"> <li class="active"> <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">hello</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">whatsup"</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">hi"</span>
+</code></pre></div></div> </li> <li> <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"hello"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"whatsup"</span><span class="p">,</span><span class="w"> </span><span class="s2">"hi"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div> </li> </ul> <h2 id="tabs-for-something-else">Tabs for something else</h2> <ul id="something-else" class="tab" data-tab="3eae5955-566f-4034-8dd3-b5a24b30e66c" data-name="something-else"> <li class="active" id="something-else-text"> <a href="#">text </a> </li> <li id="something-else-quote"> <a href="#">quote </a> </li> <li id="something-else-list"> <a href="#">list </a> </li> </ul> <ul class="tab-content" id="3eae5955-566f-4034-8dd3-b5a24b30e66c" data-name="something-else"> <li class="active"> <p>Regular text</p> </li> <li> <blockquote> <p>A quote</p> </blockquote> </li> <li> <p>Hipster list</p> <ul> <li>brunch</li> <li>fixie</li> <li>raybans</li> <li>messenger bag</li> </ul> </li> </ul>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="code"/><summary type="html"><![CDATA[this is what included tabs in a post could look like]]></summary></entry><entry><title type="html">a post with typograms</title><link href="https://siraxolott.github.io/blog/2024/typograms/" rel="alternate" type="text/html" title="a post with typograms"/><published>2024-04-29T23:36:10+00:00</published><updated>2024-04-29T23:36:10+00:00</updated><id>https://siraxolott.github.io/blog/2024/typograms</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/typograms/"><![CDATA[<p>This is an example post with some <a href="https://github.com/google/typograms/">typograms</a> code.</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">typograms
+</span><span class="sb">+----+
+|    |---&gt; My first diagram!
++----+</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>Which generates:</p> <pre><code class="language-typograms">+----+
+|    |---&gt; My first diagram!
++----+
+</code></pre> <p>Another example:</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">typograms
+</span><span class="sb">.------------------------.
+|.----------------------.|
+||"https://example.com" ||
+|'----------------------'|
+| ______________________ |
+||                      ||
+||   Welcome!           ||
+||                      ||
+||                      ||
+||  .----------------.  ||
+||  | username       |  ||
+||  '----------------'  ||
+||  .----------------.  ||
+||  |"*******"       |  ||
+||  '----------------'  ||
+||                      ||
+||  .----------------.  ||
+||  |   "Sign-up"    |  ||
+||  '----------------'  ||
+||                      ||
+|+----------------------+|
+.------------------------.</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>which generates:</p> <pre><code class="language-typograms">.------------------------.
+|.----------------------.|
+||"https://example.com" ||
+|'----------------------'|
+| ______________________ |
+||                      ||
+||   Welcome!           ||
+||                      ||
+||                      ||
+||  .----------------.  ||
+||  | username       |  ||
+||  '----------------'  ||
+||  .----------------.  ||
+||  |"*******"       |  ||
+||  '----------------'  ||
+||                      ||
+||  .----------------.  ||
+||  |   "Sign-up"    |  ||
+||  '----------------'  ||
+||                      ||
+|+----------------------+|
+.------------------------.
+</code></pre> <p>For more examples, check out the <a href="https://google.github.io/typograms/#examples">typograms documentation</a>.</p>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="diagrams"/><summary type="html"><![CDATA[this is what included typograms code could look like]]></summary></entry><entry><title type="html">a post that can be cited</title><link href="https://siraxolott.github.io/blog/2024/post-citation/" rel="alternate" type="text/html" title="a post that can be cited"/><published>2024-04-28T15:06:00+00:00</published><updated>2024-04-28T15:06:00+00:00</updated><id>https://siraxolott.github.io/blog/2024/post-citation</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/post-citation/"><![CDATA[<p>This is an example post that can be cited. The content of the post ends here, while the citation information is automatically provided below. The only thing needed is for you to set the <code class="language-plaintext highlighter-rouge">citation</code> key in the front matter to <code class="language-plaintext highlighter-rouge">true</code>.</p>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="citation"/><summary type="html"><![CDATA[this is what a post that can be cited looks like]]></summary></entry><entry><title type="html">a post with pseudo code</title><link href="https://siraxolott.github.io/blog/2024/pseudocode/" rel="alternate" type="text/html" title="a post with pseudo code"/><published>2024-04-15T00:01:00+00:00</published><updated>2024-04-15T00:01:00+00:00</updated><id>https://siraxolott.github.io/blog/2024/pseudocode</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/pseudocode/"><![CDATA[<p>This is an example post with some pseudo code rendered by <a href="https://github.com/SaswatPadhi/pseudocode.js">pseudocode</a>. The example presented here is the same as the one in the <a href="https://saswat.padhi.me/pseudocode.js/">pseudocode.js</a> documentation, with only one simple but important change: everytime you would use <code class="language-plaintext highlighter-rouge">$</code>, you should use <code class="language-plaintext highlighter-rouge">$$</code> instead. Also, note that the <code class="language-plaintext highlighter-rouge">pseudocode</code> key in the front matter is set to <code class="language-plaintext highlighter-rouge">true</code> to enable the rendering of pseudo code. As an example, using this code:</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">pseudocode
+</span><span class="sb">% This quicksort algorithm is extracted from Chapter 7, Introduction to Algorithms (3rd edition)
+\begin{algorithm}
+\caption{Quicksort}
+\begin{algorithmic}
+\PROCEDURE{Quicksort}{$$A, p, r$$}
+    \IF{$$p &lt; r$$}
+        \STATE $$q = $$ \CALL{Partition}{$$A, p, r$$}
+        \STATE \CALL{Quicksort}{$$A, p, q - 1$$}
+        \STATE \CALL{Quicksort}{$$A, q + 1, r$$}
+    \ENDIF
+\ENDPROCEDURE
+\PROCEDURE{Partition}{$$A, p, r$$}
+    \STATE $$x = A[r]$$
+    \STATE $$i = p - 1$$
+    \FOR{$$j = p$$ \TO $$r - 1$$}
+        \IF{$$A[j] &lt; x$$}
+            \STATE $$i = i + 1$$
+            \STATE exchange
+            $$A[i]$$ with $$A[j]$$
+        \ENDIF
+        \STATE exchange $$A[i]$$ with $$A[r]$$
+    \ENDFOR
+\ENDPROCEDURE
+\end{algorithmic}
+\end{algorithm}</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>Generates:</p> <pre><code class="language-pseudocode">% This quicksort algorithm is extracted from Chapter 7, Introduction to Algorithms (3rd edition)
+\begin{algorithm}
+\caption{Quicksort}
+\begin{algorithmic}
+\PROCEDURE{Quicksort}{$$A, p, r$$}
+    \IF{$$p &lt; r$$}
+        \STATE $$q = $$ \CALL{Partition}{$$A, p, r$$}
+        \STATE \CALL{Quicksort}{$$A, p, q - 1$$}
+        \STATE \CALL{Quicksort}{$$A, q + 1, r$$}
+    \ENDIF
+\ENDPROCEDURE
+\PROCEDURE{Partition}{$$A, p, r$$}
+    \STATE $$x = A[r]$$
+    \STATE $$i = p - 1$$
+    \FOR{$$j = p$$ \TO $$r - 1$$}
+        \IF{$$A[j] &lt; x$$}
+            \STATE $$i = i + 1$$
+            \STATE exchange
+            $$A[i]$$ with $$A[j]$$
+        \ENDIF
+        \STATE exchange $$A[i]$$ with $$A[r]$$
+    \ENDFOR
+\ENDPROCEDURE
+\end{algorithmic}
+\end{algorithm}
+</code></pre>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="code"/><summary type="html"><![CDATA[this is what included pseudo code could look like]]></summary></entry><entry><title type="html">a post with code diff</title><link href="https://siraxolott.github.io/blog/2024/code-diff/" rel="alternate" type="text/html" title="a post with code diff"/><published>2024-01-27T19:22:00+00:00</published><updated>2024-01-27T19:22:00+00:00</updated><id>https://siraxolott.github.io/blog/2024/code-diff</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/code-diff/"><![CDATA[<p>You can display diff code by using the regular markdown syntax:</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">diff
+</span><span class="gh">diff --git a/sample.js b/sample.js
+index 0000001..0ddf2ba
+</span><span class="gd">--- a/sample.js
+</span><span class="gi">+++ b/sample.js
+</span><span class="p">@@ -1 +1 @@</span>
+<span class="gd">-console.log("Hello World!")
+</span><span class="gi">+console.log("Hello from Diff2Html!")</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>Which generates:</p> <div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh">diff --git a/sample.js b/sample.js
+index 0000001..0ddf2ba
+</span><span class="gd">--- a/sample.js
+</span><span class="gi">+++ b/sample.js
+</span><span class="p">@@ -1 +1 @@</span>
+<span class="gd">-console.log("Hello World!")
+</span><span class="gi">+console.log("Hello from Diff2Html!")
+</span></code></pre></div></div> <p>But this is difficult to read, specially if you have a large diff. You can use <a href="https://diff2html.xyz/">diff2html</a> to display a more readable version of the diff. For this, just use <code class="language-plaintext highlighter-rouge">diff2html</code> instead of <code class="language-plaintext highlighter-rouge">diff</code> for the code block language:</p> <div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">```</span><span class="nl">diff2html
+</span><span class="sb">diff --git a/sample.js b/sample.js
+index 0000001..0ddf2ba
+--- a/sample.js
++++ b/sample.js
+@@ -1 +1 @@
+-console.log("Hello World!")
++console.log("Hello from Diff2Html!")</span>
+<span class="p">```</span>
+</code></pre></div></div> <p>If we use a longer example, for example <a href="https://github.com/rtfpessoa/diff2html/commit/c2c253d3e3f8b8b267f551e659f72b44ca2ac927">this commit from diff2html</a>, it will generate the following output:</p> <pre><code class="language-diff2html">From 2aaae31cc2a37bfff83430c2c914b140bee59b6a Mon Sep 17 00:00:00 2001
+From: Rodrigo Fernandes &lt;rtfrodrigo@gmail.com&gt;
+Date: Sun, 9 Oct 2016 16:41:54 +0100
+Subject: [PATCH 1/2] Initial template override support
+
+---
+ scripts/hulk.js                    |  4 ++--
+ src/diff2html.js                   |  3 +--
+ src/file-list-printer.js           | 11 ++++++++---
+ src/hoganjs-utils.js               | 29 +++++++++++++++++------------
+ src/html-printer.js                |  6 ++++++
+ src/line-by-line-printer.js        |  6 +++++-
+ src/side-by-side-printer.js        |  6 +++++-
+ test/file-list-printer-tests.js    |  2 +-
+ test/hogan-cache-tests.js          | 18 +++++++++++++++---
+ test/line-by-line-tests.js         |  3 +--
+ test/side-by-side-printer-tests.js |  3 +--
+ 11 files changed, 62 insertions(+), 29 deletions(-)
+
+diff --git a/scripts/hulk.js b/scripts/hulk.js
+index 5a793c18..a4b1a4d5 100755
+--- a/scripts/hulk.js
++++ b/scripts/hulk.js
+@@ -173,11 +173,11 @@ function namespace(name) {
+ // write a template foreach file that matches template extension
+ templates = extractFiles(options.argv.remain)
+   .map(function(file) {
+-    var openedFile = fs.readFileSync(file, 'utf-8');
++    var openedFile = fs.readFileSync(file, 'utf-8').trim();
+     var name;
+     if (!openedFile) return;
+     name = namespace(path.basename(file).replace(/\..*$/, ''));
+-    openedFile = removeByteOrderMark(openedFile.trim());
++    openedFile = removeByteOrderMark(openedFile);
+     openedFile = wrap(file, name, openedFile);
+     if (!options.outputdir) return openedFile;
+     fs.writeFileSync(path.join(options.outputdir, name + '.js')
+diff --git a/src/diff2html.js b/src/diff2html.js
+index 21b0119e..64e138f5 100644
+--- a/src/diff2html.js
++++ b/src/diff2html.js
+@@ -7,7 +7,6 @@
+
+ (function() {
+   var diffParser = require('./diff-parser.js').DiffParser;
+-  var fileLister = require('./file-list-printer.js').FileListPrinter;
+   var htmlPrinter = require('./html-printer.js').HtmlPrinter;
+
+   function Diff2Html() {
+@@ -43,7 +42,7 @@
+
+     var fileList = '';
+     if (configOrEmpty.showFiles === true) {
+-      fileList = fileLister.generateFileList(diffJson, configOrEmpty);
++      fileList = htmlPrinter.generateFileListSummary(diffJson, configOrEmpty);
+     }
+
+     var diffOutput = '';
+diff --git a/src/file-list-printer.js b/src/file-list-printer.js
+index e408d9b2..1e0a2c61 100644
+--- a/src/file-list-printer.js
++++ b/src/file-list-printer.js
+@@ -8,11 +8,16 @@
+ (function() {
+   var printerUtils = require('./printer-utils.js').PrinterUtils;
+
+-  var hoganUtils = require('./hoganjs-utils.js').HoganJsUtils;
++  var hoganUtils;
++
+   var baseTemplatesPath = 'file-summary';
+   var iconsBaseTemplatesPath = 'icon';
+
+-  function FileListPrinter() {
++  function FileListPrinter(config) {
++    this.config = config;
++
++    var HoganJsUtils = require('./hoganjs-utils.js').HoganJsUtils;
++    hoganUtils = new HoganJsUtils(config);
+   }
+
+   FileListPrinter.prototype.generateFileList = function(diffFiles) {
+@@ -38,5 +43,5 @@
+     });
+   };
+
+-  module.exports.FileListPrinter = new FileListPrinter();
++  module.exports.FileListPrinter = FileListPrinter;
+ })();
+diff --git a/src/hoganjs-utils.js b/src/hoganjs-utils.js
+index 9949e5fa..0dda08d7 100644
+--- a/src/hoganjs-utils.js
++++ b/src/hoganjs-utils.js
+@@ -8,18 +8,19 @@
+ (function() {
+   var fs = require('fs');
+   var path = require('path');
+-
+   var hogan = require('hogan.js');
+
+   var hoganTemplates = require('./templates/diff2html-templates.js');
+
+-  var templatesPath = path.resolve(__dirname, 'templates');
++  var extraTemplates;
+
+-  function HoganJsUtils() {
++  function HoganJsUtils(configuration) {
++    this.config = configuration || {};
++    extraTemplates = this.config.templates || {};
+   }
+
+-  HoganJsUtils.prototype.render = function(namespace, view, params, configuration) {
+-    var template = this.template(namespace, view, configuration);
++  HoganJsUtils.prototype.render = function(namespace, view, params) {
++    var template = this.template(namespace, view);
+     if (template) {
+       return template.render(params);
+     }
+@@ -27,17 +28,16 @@
+     return null;
+   };
+
+-  HoganJsUtils.prototype.template = function(namespace, view, configuration) {
+-    var config = configuration || {};
++  HoganJsUtils.prototype.template = function(namespace, view) {
+     var templateKey = this._templateKey(namespace, view);
+
+-    return this._getTemplate(templateKey, config);
++    return this._getTemplate(templateKey);
+   };
+
+-  HoganJsUtils.prototype._getTemplate = function(templateKey, config) {
++  HoganJsUtils.prototype._getTemplate = function(templateKey) {
+     var template;
+
+-    if (!config.noCache) {
++    if (!this.config.noCache) {
+       template = this._readFromCache(templateKey);
+     }
+
+@@ -53,6 +53,7 @@
+
+     try {
+       if (fs.readFileSync) {
++        var templatesPath = path.resolve(__dirname, 'templates');
+         var templatePath = path.join(templatesPath, templateKey);
+         var templateContent = fs.readFileSync(templatePath + '.mustache', 'utf8');
+         template = hogan.compile(templateContent);
+@@ -66,12 +67,16 @@
+   };
+
+   HoganJsUtils.prototype._readFromCache = function(templateKey) {
+-    return hoganTemplates[templateKey];
++    return extraTemplates[templateKey] || hoganTemplates[templateKey];
+   };
+
+   HoganJsUtils.prototype._templateKey = function(namespace, view) {
+     return namespace + '-' + view;
+   };
+
+-  module.exports.HoganJsUtils = new HoganJsUtils();
++  HoganJsUtils.prototype.compile = function(templateStr) {
++    return hogan.compile(templateStr);
++  };
++
++  module.exports.HoganJsUtils = HoganJsUtils;
+ })();
+diff --git a/src/html-printer.js b/src/html-printer.js
+index 585d5b66..13f83047 100644
+--- a/src/html-printer.js
++++ b/src/html-printer.js
+@@ -8,6 +8,7 @@
+ (function() {
+   var LineByLinePrinter = require('./line-by-line-printer.js').LineByLinePrinter;
+   var SideBySidePrinter = require('./side-by-side-printer.js').SideBySidePrinter;
++  var FileListPrinter = require('./file-list-printer.js').FileListPrinter;
+
+   function HtmlPrinter() {
+   }
+@@ -22,5 +23,10 @@
+     return sideBySidePrinter.generateSideBySideJsonHtml(diffFiles);
+   };
+
++  HtmlPrinter.prototype.generateFileListSummary = function(diffJson, config) {
++    var fileListPrinter = new FileListPrinter(config);
++    return fileListPrinter.generateFileList(diffJson);
++  };
++
+   module.exports.HtmlPrinter = new HtmlPrinter();
+ })();
+diff --git a/src/line-by-line-printer.js b/src/line-by-line-printer.js
+index b07eb53c..d230bedd 100644
+--- a/src/line-by-line-printer.js
++++ b/src/line-by-line-printer.js
+@@ -11,7 +11,8 @@
+   var utils = require('./utils.js').Utils;
+   var Rematch = require('./rematch.js').Rematch;
+
+-  var hoganUtils = require('./hoganjs-utils.js').HoganJsUtils;
++  var hoganUtils;
++
+   var genericTemplatesPath = 'generic';
+   var baseTemplatesPath = 'line-by-line';
+   var iconsBaseTemplatesPath = 'icon';
+@@ -19,6 +20,9 @@
+
+   function LineByLinePrinter(config) {
+     this.config = config;
++
++    var HoganJsUtils = require('./hoganjs-utils.js').HoganJsUtils;
++    hoganUtils = new HoganJsUtils(config);
+   }
+
+   LineByLinePrinter.prototype.makeFileDiffHtml = function(file, diffs) {
+diff --git a/src/side-by-side-printer.js b/src/side-by-side-printer.js
+index bbf1dc8d..5e3033b3 100644
+--- a/src/side-by-side-printer.js
++++ b/src/side-by-side-printer.js
+@@ -11,7 +11,8 @@
+   var utils = require('./utils.js').Utils;
+   var Rematch = require('./rematch.js').Rematch;
+
+-  var hoganUtils = require('./hoganjs-utils.js').HoganJsUtils;
++  var hoganUtils;
++
+   var genericTemplatesPath = 'generic';
+   var baseTemplatesPath = 'side-by-side';
+   var iconsBaseTemplatesPath = 'icon';
+@@ -26,6 +27,9 @@
+
+   function SideBySidePrinter(config) {
+     this.config = config;
++
++    var HoganJsUtils = require('./hoganjs-utils.js').HoganJsUtils;
++    hoganUtils = new HoganJsUtils(config);
+   }
+
+   SideBySidePrinter.prototype.makeDiffHtml = function(file, diffs) {
+diff --git a/test/file-list-printer-tests.js b/test/file-list-printer-tests.js
+index a502a46f..60ea3208 100644
+--- a/test/file-list-printer-tests.js
++++ b/test/file-list-printer-tests.js
+@@ -1,6 +1,6 @@
+ var assert = require('assert');
+
+-var fileListPrinter = require('../src/file-list-printer.js').FileListPrinter;
++var fileListPrinter = new (require('../src/file-list-printer.js').FileListPrinter)();
+
+ describe('FileListPrinter', function() {
+   describe('generateFileList', function() {
+diff --git a/test/hogan-cache-tests.js b/test/hogan-cache-tests.js
+index 190bf6f8..3bb754ac 100644
+--- a/test/hogan-cache-tests.js
++++ b/test/hogan-cache-tests.js
+@@ -1,6 +1,6 @@
+ var assert = require('assert');
+
+-var HoganJsUtils = require('../src/hoganjs-utils.js').HoganJsUtils;
++var HoganJsUtils = new (require('../src/hoganjs-utils.js').HoganJsUtils)();
+ var diffParser = require('../src/diff-parser.js').DiffParser;
+
+ describe('HoganJsUtils', function() {
+@@ -21,16 +21,28 @@ describe('HoganJsUtils', function() {
+       });
+       assert.equal(emptyDiffHtml, result);
+     });
++
+     it('should render view without cache', function() {
+       var result = HoganJsUtils.render('generic', 'empty-diff', {
+         contentClass: 'd2h-code-line',
+         diffParser: diffParser
+       }, {noCache: true});
+-      assert.equal(emptyDiffHtml + '\n', result);
++      assert.equal(emptyDiffHtml, result);
+     });
++
+     it('should return null if template is missing', function() {
+-      var result = HoganJsUtils.render('generic', 'missing-template', {}, {noCache: true});
++      var hoganUtils = new (require('../src/hoganjs-utils.js').HoganJsUtils)({noCache: true});
++      var result = hoganUtils.render('generic', 'missing-template', {});
+       assert.equal(null, result);
+     });
++
++    it('should allow templates to be overridden', function() {
++      var emptyDiffTemplate = HoganJsUtils.compile('&lt;p&gt;&lt;/p&gt;');
++
++      var config = {templates: {'generic-empty-diff': emptyDiffTemplate}};
++      var hoganUtils = new (require('../src/hoganjs-utils.js').HoganJsUtils)(config);
++      var result = hoganUtils.render('generic', 'empty-diff', {myName: 'Rodrigo Fernandes'});
++      assert.equal('&lt;p&gt;Rodrigo Fernandes&lt;/p&gt;', result);
++    });
+   });
+ });
+diff --git a/test/line-by-line-tests.js b/test/line-by-line-tests.js
+index 1cd92073..8869b3df 100644
+--- a/test/line-by-line-tests.js
++++ b/test/line-by-line-tests.js
+@@ -14,7 +14,7 @@ describe('LineByLinePrinter', function() {
+         '            File without changes\n' +
+         '        &lt;/div&gt;\n' +
+         '    &lt;/td&gt;\n' +
+-        '&lt;/tr&gt;\n';
++        '&lt;/tr&gt;';
+
+       assert.equal(expected, fileHtml);
+     });
+@@ -422,7 +422,6 @@ describe('LineByLinePrinter', function() {
+         '        &lt;/div&gt;\n' +
+         '    &lt;/td&gt;\n' +
+         '&lt;/tr&gt;\n' +
+-        '\n' +
+         '                &lt;/tbody&gt;\n' +
+         '            &lt;/table&gt;\n' +
+         '        &lt;/div&gt;\n' +
+diff --git a/test/side-by-side-printer-tests.js b/test/side-by-side-printer-tests.js
+index 76625f8e..771daaa5 100644
+--- a/test/side-by-side-printer-tests.js
++++ b/test/side-by-side-printer-tests.js
+@@ -14,7 +14,7 @@ describe('SideBySidePrinter', function() {
+         '            File without changes\n' +
+         '        &lt;/div&gt;\n' +
+         '    &lt;/td&gt;\n' +
+-        '&lt;/tr&gt;\n';
++        '&lt;/tr&gt;';
+
+       assert.equal(expectedRight, fileHtml.right);
+       assert.equal(expectedLeft, fileHtml.left);
+@@ -324,7 +324,6 @@ describe('SideBySidePrinter', function() {
+         '        &lt;/div&gt;\n' +
+         '    &lt;/td&gt;\n' +
+         '&lt;/tr&gt;\n' +
+-        '\n' +
+         '                    &lt;/tbody&gt;\n' +
+         '                &lt;/table&gt;\n' +
+         '            &lt;/div&gt;\n' +
+
+From f3cadb96677d0eb82fc2752dc3ffbf35ca9b5bdb Mon Sep 17 00:00:00 2001
+From: Rodrigo Fernandes &lt;rtfrodrigo@gmail.com&gt;
+Date: Sat, 15 Oct 2016 13:21:22 +0100
+Subject: [PATCH 2/2] Allow uncompiled templates
+
+---
+ README.md                 |  3 +++
+ src/hoganjs-utils.js      |  7 +++++++
+ test/hogan-cache-tests.js | 24 +++++++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index 132c8a28..46909f25 100644
+--- a/README.md
++++ b/README.md
+@@ -98,6 +98,9 @@ The HTML output accepts a Javascript object with configuration. Possible options
+   - `synchronisedScroll`: scroll both panes in side-by-side mode: `true` or `false`, default is `false`
+   - `matchWordsThreshold`: similarity threshold for word matching, default is 0.25
+   - `matchingMaxComparisons`: perform at most this much comparisons for line matching a block of changes, default is `2500`
++  - `templates`: object with previously compiled templates to replace parts of the html
++  - `rawTemplates`: object with raw not compiled templates to replace parts of the html
++  &gt; For more information regarding the possible templates look into [src/templates](https://github.com/rtfpessoa/diff2html/tree/master/src/templates)
+
+ ## Diff2HtmlUI Helper
+
+diff --git a/src/hoganjs-utils.js b/src/hoganjs-utils.js
+index 0dda08d7..b2e9c275 100644
+--- a/src/hoganjs-utils.js
++++ b/src/hoganjs-utils.js
+@@ -17,6 +17,13 @@
+   function HoganJsUtils(configuration) {
+     this.config = configuration || {};
+     extraTemplates = this.config.templates || {};
++
++    var rawTemplates = this.config.rawTemplates || {};
++    for (var templateName in rawTemplates) {
++      if (rawTemplates.hasOwnProperty(templateName)) {
++        if (!extraTemplates[templateName]) extraTemplates[templateName] = this.compile(rawTemplates[templateName]);
++      }
++    }
+   }
+
+   HoganJsUtils.prototype.render = function(namespace, view, params) {
+diff --git a/test/hogan-cache-tests.js b/test/hogan-cache-tests.js
+index 3bb754ac..a34839c0 100644
+--- a/test/hogan-cache-tests.js
++++ b/test/hogan-cache-tests.js
+@@ -36,7 +36,7 @@ describe('HoganJsUtils', function() {
+       assert.equal(null, result);
+     });
+
+-    it('should allow templates to be overridden', function() {
++    it('should allow templates to be overridden with compiled templates', function() {
+       var emptyDiffTemplate = HoganJsUtils.compile('&lt;p&gt;&lt;/p&gt;');
+
+       var config = {templates: {'generic-empty-diff': emptyDiffTemplate}};
+@@ -44,5 +44,27 @@ describe('HoganJsUtils', function() {
+       var result = hoganUtils.render('generic', 'empty-diff', {myName: 'Rodrigo Fernandes'});
+       assert.equal('&lt;p&gt;Rodrigo Fernandes&lt;/p&gt;', result);
+     });
++
++    it('should allow templates to be overridden with uncompiled templates', function() {
++      var emptyDiffTemplate = '&lt;p&gt;&lt;/p&gt;';
++
++      var config = {rawTemplates: {'generic-empty-diff': emptyDiffTemplate}};
++      var hoganUtils = new (require('../src/hoganjs-utils.js').HoganJsUtils)(config);
++      var result = hoganUtils.render('generic', 'empty-diff', {myName: 'Rodrigo Fernandes'});
++      assert.equal('&lt;p&gt;Rodrigo Fernandes&lt;/p&gt;', result);
++    });
++
++    it('should allow templates to be overridden giving priority to compiled templates', function() {
++      var emptyDiffTemplate = HoganJsUtils.compile('&lt;p&gt;&lt;/p&gt;');
++      var emptyDiffTemplateUncompiled = '&lt;p&gt;Not used!&lt;/p&gt;';
++
++      var config = {
++        templates: {'generic-empty-diff': emptyDiffTemplate},
++        rawTemplates: {'generic-empty-diff': emptyDiffTemplateUncompiled}
++      };
++      var hoganUtils = new (require('../src/hoganjs-utils.js').HoganJsUtils)(config);
++      var result = hoganUtils.render('generic', 'empty-diff', {myName: 'Rodrigo Fernandes'});
++      assert.equal('&lt;p&gt;Rodrigo Fernandes&lt;/p&gt;', result);
++    });
+   });
+ });
+</code></pre>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="code"/><summary type="html"><![CDATA[this is how you can display code diffs]]></summary></entry><entry><title type="html">a post with advanced image components</title><link href="https://siraxolott.github.io/blog/2024/advanced-images/" rel="alternate" type="text/html" title="a post with advanced image components"/><published>2024-01-27T11:46:00+00:00</published><updated>2024-01-27T11:46:00+00:00</updated><id>https://siraxolott.github.io/blog/2024/advanced-images</id><content type="html" xml:base="https://siraxolott.github.io/blog/2024/advanced-images/"><![CDATA[<p>This is an example post with advanced image components.</p> <h2 id="image-slider">Image Slider</h2> <p>This is a simple image slider. It uses the <a href="https://swiperjs.com/">Swiper</a> library. Check the <a href="https://swiperjs.com/demos">examples page</a> for more information of what you can achieve with it.</p> <swiper-container keyboard="true" navigation="true" pagination="true" pagination-clickable="true" pagination-dynamic-bullets="true" rewind="true"> <swiper-slide> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/9-480.webp 480w,/assets/img/9-800.webp 800w,/assets/img/9-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/9.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </swiper-slide> <swiper-slide> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/7-480.webp 480w,/assets/img/7-800.webp 800w,/assets/img/7-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/7.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </swiper-slide> <swiper-slide> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/8-480.webp 480w,/assets/img/8-800.webp 800w,/assets/img/8-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/8.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </swiper-slide> <swiper-slide> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/10-480.webp 480w,/assets/img/10-800.webp 800w,/assets/img/10-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/10.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </swiper-slide> <swiper-slide> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/12-480.webp 480w,/assets/img/12-800.webp 800w,/assets/img/12-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/12.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="eager" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </swiper-slide> </swiper-container> <h2 id="image-comparison-slider">Image Comparison Slider</h2> <p>This is a simple image comparison slider. It uses the <a href="https://img-comparison-slider.sneas.io/">img-comparison-slider</a> library. Check the <a href="https://img-comparison-slider.sneas.io/examples.html">examples page</a> for more information of what you can achieve with it.</p> <img-comparison-slider> <figure slot="first"> <picture> <source class="responsive-img-srcset" srcset="/assets/img/prof_pic-480.webp 480w,/assets/img/prof_pic-800.webp 800w,/assets/img/prof_pic-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/prof_pic.jpg" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="lazy" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> <figure slot="second"> <picture> <source class="responsive-img-srcset" srcset="/assets/img/prof_pic_color-480.webp 480w,/assets/img/prof_pic_color-800.webp 800w,/assets/img/prof_pic_color-1400.webp 1400w," type="image/webp" sizes="95vw"/> <img src="/assets/img/prof_pic_color.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" loading="lazy" onerror="this.onerror=null; $('.responsive-img-srcset').remove();"/> </picture> </figure> </img-comparison-slider>]]></content><author><name></name></author><category term="sample-posts"/><category term="formatting"/><category term="images"/><summary type="html"><![CDATA[this is what advanced image components could look like]]></summary></entry></feed>
