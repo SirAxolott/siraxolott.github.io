@@ -1,3 +1,11 @@
+---
+layout: post
+title: DIY Mechanical Keyboard Part 1
+date: 2025-04-22
+description: Make your own mechanical keyboard
+tags: 
+categories: post
+---
 # Your First Custom Keyboard PCB: A Step-by-Step Guide
 
 So, you're ready to ditch the off-the-shelf options and build a keyboard that's *truly* yours? Awesome! Designing your own Printed Circuit Board (PCB) is a hugely rewarding part of the custom keyboard hobby. It might seem daunting initially, but breaking it down step-by-step makes it manageable.
