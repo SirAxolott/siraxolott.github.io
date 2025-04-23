@@ -41,7 +41,7 @@ The **Keyboard Layout Editor (KLE)** ([https://www.keyboard-layout-editor.com/](
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="_posts/Screenshots/keyboard-layout.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.liquid loading="eager" path="assets/img/keyboard-layout.png" class="img-fluid rounded z-depth-1" zoomable=true %}
     </div>
 </div>
 <div class="caption">
