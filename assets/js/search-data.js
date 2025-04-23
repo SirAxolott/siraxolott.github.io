@@ -59,6 +59,17 @@ ninja.data = [{
             window.location.href = "/blog/2025/test/";
           
         },
+      },{id: "post-a-post-with-formatting-and-links",
+        
+          title: "a post with formatting and links",
+        
+        description: "march &amp; april, looking forward to summer",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2015/formatting-and-links/";
+          
+        },
       },{id: "books-the-godfather",
           title: 'The Godfather',
           description: "",
