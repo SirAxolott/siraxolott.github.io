@@ -16,7 +16,7 @@ announcements:
 latest_posts:
   enabled: true
   scrollable: true
-  limit: 3
+  limit: 1
 ---
 
 Hi, my name is **Ojas Patil**, and I'm a sophomore pursuing a Bachelor of Science in Computer Engineering at the University of Wisconsin - Madison. I'm a Linux enthusiast. My current interests are in `Computer Architecture` and `VLSI`. In my free time, I enjoy movies and soccer!
