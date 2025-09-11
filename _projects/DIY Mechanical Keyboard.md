@@ -14,7 +14,6 @@ opkeyboard is a library of files required to make a keyboard
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
 pip install foobar
