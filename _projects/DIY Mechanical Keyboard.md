@@ -78,13 +78,9 @@ This project features a 75% mechanical keyboard with a custom PCB, case, and ful
 
 3. Build the firmware:
 
-   ```sh
-
-   qmk compile -kb opkeyboard -km default
-
-   ```
-
-  
+```sh
+qmk compile -kb opkeyboard -km default
+```
 
 ### 2. Flashing the Firmware
 
@@ -94,11 +90,9 @@ This project features a 75% mechanical keyboard with a custom PCB, case, and ful
 
 2. Flash the firmware:
 
-   ```sh
-
+```sh
    qmk flash -kb opkeyboard -km default
-
-   ```
+```
 
   
 
