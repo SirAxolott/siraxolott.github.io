@@ -37,7 +37,7 @@ The **Keyboard Layout Editor (KLE)** ([https://www.keyboard-layout-editor.com/](
 3.  **Customize:** Arrange keys, adjust their sizes, and add labels.
     * **Key Properties:** Use the properties panel or the raw data tab. Properties like `{w:2}` define width, `{x:0.25}` adds horizontal spacing, `{a:4}` changes legend alignment. Study the syntax!
     * **My Layout:** I specifically left space in the top-left for my rotary encoder.
-        ![Keyboard Layout](keyboard-layout.png)
+        ![Keyboard Layout](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/keyboard-layout.png)
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
@@ -52,7 +52,7 @@ The **Keyboard Layout Editor (KLE)** ([https://www.keyboard-layout-editor.com/](
 </div>
 
 4.  **Export:** Crucially, export your layout in **TWO formats**:
-    * **`.json` file:** This contains the precise positional data we'll use later for placing components. ([My JSON for reference](keyboard-layout.json))
+    * **`.json` file:** This contains the precise positional data we'll use later for placing components. ([My JSON for reference](Projects/Portfolio/siraxolott.github.io/_posts/In%20Progress/keyboard-layout.json))
     * **`.png` file:** A visual reference helpful during the process.
 
 ### Step 3: Plan Your Electrical Matrix
@@ -61,7 +61,7 @@ Underneath the keycaps, keyboards use a grid (matrix) of rows and columns to det
 
 * **Visualize the Grid:** Look at your KLE layout PNG. Mentally (or physically, if you print it) overlay a grid connecting the *centers* of the keys. You decide how many rows and columns you need. Fewer rows/columns mean fewer pins required on your microcontroller, but the wiring can sometimes be more complex.
 * **My Grid:** Here’s how I mapped out my rows and columns, assigning numbers starting from 0. Notice how the rotary encoder's *switch* function also occupies a spot in the matrix (Row 0, Col 15 in my case).
-    ![Keyboard Matrix Grid](keyboard-matrix.jpeg)
+    ![Keyboard Matrix Grid](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/keyboard-matrix.jpeg)
 * **Count Connections:** Note down the number of rows and columns. You'll also need connections for your encoder's rotation pins (A & B) and ground (GND). This count determines the size of the connector between the daughterboard and the main logic board.
 
 ---
@@ -79,7 +79,7 @@ Now, let's translate our plan into an electrical blueprint using KiCad.
     * `Fabrication Toolkit`: Useful for generating manufacturing files later.
     * `Keyswitch Kicad Library`: Provides many switch footprints.
     * `Keyboard footprints placer`: *Essential* for accurately placing switches and diodes based on your KLE file.
-    ![KiCad Plugin Manager](plugin-content-manager-ss.png)
+    ![KiCad Plugin Manager](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/plugin-content-manager-ss.png)
 
 ### Step 5: Building the Switch Daughterboard Schematic
 
@@ -88,18 +88,18 @@ Now, let's translate our plan into an electrical blueprint using KiCad.
     * Press `A` (Add Symbol).
     * Add `Placeholder_Keyswitch` and `Placeholder_Diode` (from the `scottokeebs` library).
     * Arrange them. The diode prevents "ghosting" (false keypresses). We'll connect one switch pin to the column, and the diode connects the other pin to the row.
-        ![Single Switch/Diode Unit](unitcell.png)
+        ![Single Switch/Diode Unit](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/unitcell.png)
 3.  **Replicate for the Matrix:**
     * Select the switch and diode pair.
     * Copy (`Ctrl+C`) and Paste (`Ctrl+V`) this unit for *every single key* in your layout. Arrange them roughly mirroring your planned grid (from Step 3).
     * **Crucially:** Ensure the reference designators (S1, D1, S2, D2...) are sequential and without gaps. The placement plugin relies on this!
-        ![Full Schematic Matrix Layout](schematic-matrix.png)
+        ![Full Schematic Matrix Layout](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/schematic-matrix.png)
 4.  **Wire Rows & Columns:**
     * Use the Wire tool (`W`).
     * Connect the designated switch pins together for each column.
     * Connect the diodes together for each row.
     * Add Global Labels (`Ctrl+L`): Label each row line (e.g., `ROW0`, `ROW1`...) and each column line (e.g., `COL0`, `COL1`...) according to your plan from Step 3.
-        ![Wired and Labeled Matrix](column-row-matrix.png)
+        ![Wired and Labeled Matrix](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/column-row-matrix.png)
 5.  **Add Rotary Encoder:**
     * Press `A`, find and add `RotaryEncoder_Switch`.
     * Wire it:
@@ -107,12 +107,12 @@ Now, let's translate our plan into an electrical blueprint using KiCad.
         * Common pin (`C`): Connect to a `GND` power symbol (add one if needed).
         * Switch pins (`S1`, `S2`): Connect these *directly* into your matrix like any other switch. I connected mine to `ROW0` and `COL15`.
         * Add a `GND` global label to the ground connection as well.
-        ![Rotary Encoder Wiring](rotaryencoder-switch.png)
+        ![Rotary Encoder Wiring](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/rotaryencoder-switch.png)
 6.  **Add Daughterboard Connector:**
     * **Calculate Pins:** Sum your rows + columns + encoder pins (`PIN_A`, `PIN_B`, `GND`). (My calculation: 16 cols + 6 rows + 3 encoder = 25 pins).
     * **Choose Connector:** Select a standard header size that fits your pin count. A 2xN pin header is common. I chose a 2x13 (26 pins) for some spare capacity, using the `Conn_02x13_Odd_Even` symbol.
     * **Place & Wire:** Add the connector symbol (`A` key). Wire each pin to the corresponding global label (`ROW0`, `COL0`, `PIN_A`, `GND`, etc.). Plan a logical pinout.
-        ![Daughterboard Connector Wiring](connector-daughterboard.png)
+        ![Daughterboard Connector Wiring](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/connector-daughterboard.png)
 7.  **Add Mounting Holes:**
     * Press `A`, add four `MountingHole` symbols. These will be used to screw the PCB into a case.
 
@@ -120,8 +120,8 @@ Now, let's translate our plan into an electrical blueprint using KiCad.
 
 Now we link each schematic symbol to its physical counterpart on the PCB.
 
-1.  **Open Tool:** Click the "Assign PCB footprints..." button on the top toolbar. ![Assign Footprint Button](assign-footprint-button.png)
-2.  **Assign Footprints Window:** ![Assign Footprint Window](assign-footprint.png)
+1.  **Open Tool:** Click the "Assign PCB footprints..." button on the top toolbar. ![Assign Footprint Button](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/assign-footprint-button.png)
+2.  **Assign Footprints Window:** ![Assign Footprint Window](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/assign-footprint.png)
 3.  **Diodes:**
     * Filter by `ScottoKeebs_Components` library (left pane).
     * Select all Diodes (D1, D2...) in the center pane.
@@ -157,13 +157,13 @@ Time to arrange the physical components on the board.
 1.  **Open PCB Editor:** Go back to the main KiCad project window and open the `<project_name>.kicad_pcb` file.
 2.  **Update from Schematic:** Click the "Update PCB from Schematic" button (or Tools menu). Approve the changes. All your footprints will appear, likely in a jumbled pile. Move this pile off the board area for now.
 3.  **Place Switches Automatically:**
-    * Click the **Keyboard Placer** plugin icon. ![Keyboard Placer Icon](keyboard-plugin.png)
+    * Click the **Keyboard Placer** plugin icon. ![Keyboard Placer Icon](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/keyboard-plugin.png)
     * **Configure:**
         * Browse and select your **KLE `.json` file**.
         * Set the **switch prefix** to **"S"**.
         * **IMPORTANT:** Make sure **diode placement options are OFF/disabled** for this run.
         * Click **OK**.
-        ![Keyboard Placer Settings - Switches Only](kbplacer1.png)
+        ![Keyboard Placer Settings - Switches Only](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/kbplacer1.png)
     * The plugin will arrange *only the switch footprints* exactly matching your KLE layout. Magic!
 
 ### Step 8: Placing Diodes with Precision
@@ -175,7 +175,7 @@ We'll place the diodes relative to the switches using the plugin again, but firs
     * Select D1, press `M` (Move), and position it near S1 where you want it (e.g., just above or below).
     * Press `R` (Rotate) to orient it correctly (match the line on the footprint to the line on the schematic symbol).
     * Press `F` (Flip) to move it to the back layer (`B.Cu`). This is common practice.
-        ![Switch and Diode Relative Position](switch-diode-position.png)
+        ![Switch and Diode Relative Position](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/switch-diode-position.png)
 2.  **Place Remaining Diodes Automatically:**
     * Run the **Keyboard Placer** plugin again.
     * **Configure:**
@@ -184,19 +184,19 @@ We'll place the diodes relative to the switches using the plugin again, but firs
         * Set the **diode prefix** to "D".
         * The plugin should use the relative position of D1 to S1 as a template for all others.
         * Click **OK**.
-        ![Keyboard Placer Settings - Diodes Enabled](kbplacer2.png)
+        ![Keyboard Placer Settings - Diodes Enabled](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/kbplacer2.png)
     * All diodes should now snap into place relative to their corresponding switches.
 
 ### Step 9: Placing Remaining Components Manually
 
 1.  **Rotary Encoder (RE1):**
     * Decide its exact location relative to nearby switches (e.g., centered between S14 and S15).
-    * Use the **Measure Tool** (`Ctrl+Shift+M`): Click the center of a reference switch (like S15), then click the approximate center of the RE1 footprint. Note the `dx` and `dy` distances in the status bar. ![Measurement Tool Example](measurement-tool.png)
+    * Use the **Measure Tool** (`Ctrl+Shift+M`): Click the center of a reference switch (like S15), then click the approximate center of the RE1 footprint. Note the `dx` and `dy` distances in the status bar. ![Measurement Tool Example](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/measurement-tool.png)
     * Select RE1, press `Shift+M` (Move Exactly), enter the measured `dx`/`dy` (watch the signs!), and click OK. You may need to adjust slightly or measure from a second reference point.
-        ![PCB Arrangement with Encoder](pcb-arrangment1.png)
+        ![PCB Arrangement with Encoder](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/pcb-arrangment1.png)
 2.  **Connector (J1):**
     * Select J1, press `M`, and move it to your desired location (e.g., centered below the main key cluster, perhaps aligned vertically with a specific switch like S5). Use grid snapping or alignment tools.
-        ![PCB Arrangement with Connector](pcb-arrangment2.png)
+        ![PCB Arrangement with Connector](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/pcb-arrangment2.png)
 3.  **Mounting Holes (H1-H4):**
     * Select each hole (H1-H4), press `M`, and place them, typically near the corners or strategic points for case mounting. Ensure they don't overlap traces or components.
 
@@ -210,7 +210,7 @@ Now we draw the copper pathways (traces) connecting everything.
 4.  **Switch Layers:** If you need to cross another trace, press `V` while routing. This places a **Via** (a plated hole connecting layers) and switches you to the other copper layer (`B.Cu` - back copper, usually). Press `V` again to switch back.
 5.  **Connect Everything:** Methodically connect all pads indicated by the ratsnest lines – rows, columns, encoder pins, connector pins. Aim for neat routes and avoid very sharp angles.
 6.  **Check Status:** Look at the bottom status bar. The "Unrouted" count **must be 0** when finished!
-    ![Fully Routed PCB](wired-pcb.png)
+    ![Fully Routed PCB](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/wired-pcb.png)
 
 ### Step 11: Defining the Board Shape (Edge Cuts)
 
@@ -235,7 +235,7 @@ Almost there! Just need to check our work and generate the files manufacturers n
 2.  **3D Viewer:**
     * Press `Alt+3` (or View -> 3D Viewer). This gives a fantastic preview of your finished board. Check for any obvious physical conflicts.
 3.  **Generate Manufacturing Files (Gerbers & Drill File):**
-    * Go to **File -> Plot...**. ![Plot/Export Icon](export-pcb.png)
+    * Go to **File -> Plot...**. ![Plot/Export Icon](Projects/Portfolio/siraxolott.github.io/_posts/Screenshots/export-pcb.png)
     * **Layers:** Ensure these layers are selected for plotting: `F.Cu`, `B.Cu`, `F.Mask`, `B.Mask`, `F.SilkS`, `B.SilkS`, `Edge.Cuts`. (Front/Back Copper, Solder Mask, Silkscreen, and the Outline).
     * **Plot:** Click **Plot**. This generates the Gerber files in a subfolder.
     * **Generate Drill File:** Click the **Generate Drill Files...** button in the Plot window. Use default settings and click **Generate Drill File**.

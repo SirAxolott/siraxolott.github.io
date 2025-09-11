@@ -7,75 +7,137 @@ importance: 1
 category: work
 related_publications: true
 ---
+# opkeyboard
 
-Every project has a beautiful feature showcase page.
-It's easy to include images in a flexible 3-column grid format.
-Make your photos 1/3, 2/3, or full width.
+  
 
-To give your project a background in the portfolio page, just add the img tag to the front matter like so:
+A custom mechanical keyboard project designed and built by SirAxolott.
 
-    ---
-    layout: page
-    title: project
-    description: a project with a background image
-    img: /assets/img/12.jpg
-    ---
+  
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/1.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/3.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    Caption photos easily. On the left, a road goes through a tunnel. Middle, leaves artistically fall in a hipster photoshoot. Right, in another hipster photoshoot, a lumberjack grasps a handful of pine needles.
-</div>
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/5.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    This image can also have a caption. It's like magic.
-</div>
+## Overview
 
-You can also put regular text between your rows of images, even citations {% cite einstein1950meaning %}.
-Say you wanted to write a bit about your project before you posted the rest of the images.
-You describe how you toiled, sweated, _bled_ for your project, and then... you reveal its glory in the next row of images.
+  
 
-<div class="row justify-content-sm-center">
-    <div class="col-sm-8 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-    <div class="col-sm-4 mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-    </div>
-</div>
-<div class="caption">
-    You can also have artistically styled 2/3 + 1/3 images, like these.
-</div>
+This project features a 75% mechanical keyboard with a custom PCB, case, and fully programmable firmware using [QMK Firmware](https://qmk.fm/). The keyboard supports VIA for easy key remapping and configuration.
 
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+  
+  
+  
 
-{% raw %}
+## Project Structure
 
-```html
-<div class="row justify-content-sm-center">
-  <div class="col-sm-8 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/6.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-  <div class="col-sm-4 mt-3 mt-md-0">
-    {% include figure.liquid path="assets/img/11.jpg" title="example image" class="img-fluid rounded z-depth-1" %}
-  </div>
-</div>
-```
+  
 
-{% endraw %}
+- **Case/**  
+
+   Contains the keyboard case design files, including STEP files for 3D modeling.
+
+  
+
+- **PCB/**  
+
+   Includes PCB design files, Bill of Materials (BOM), and pick-and-place files for manufacturing.
+
+  
+
+- **Firmware/**  
+
+   Houses the QMK firmware configuration, including keymaps and VIA support.
+
+  
+  
+
+## Features
+
+  
+
+- **QMK Firmware**: Powerful open-source firmware for custom keyboards.
+
+- **VIA Support**: Real-time key remapping using VIA software.
+
+- **Rotary Encoder Support**: The keyboard features a single rotary encoder on the PCB, allowing you to assign custom actions such as volume control, scrolling, or other functions via QMK and VIA.
+
+- **Custom Keymaps**: Easily modify key layouts in `keymaps/`.
+
+- **Open Hardware**: All design files are open for modification and improvement.
+
+  
+
+## Getting Started
+
+  
+
+### 1. Building the Firmware
+
+  
+
+1. Set up the QMK build environment ([QMK Docs](https://docs.qmk.fm/#/newbs_getting_started)).
+
+2. Clone this repository and navigate to the `Firmware` directory.
+
+3. Build the firmware:
+
+   ```sh
+
+   qmk compile -kb opkeyboard -km default
+
+   ```
+
+  
+
+### 2. Flashing the Firmware
+
+  
+
+1. Enter bootloader mode (use the reset button or Bootmagic).
+
+2. Flash the firmware:
+
+   ```sh
+
+   qmk flash -kb opkeyboard -km default
+
+   ```
+
+  
+
+### 3. VIA Configuration
+
+  
+
+- Open VIA and load the `via.json` file from the `Firmware/` directory to enable advanced remapping.
+
+  
+
+## Maintainer
+
+  
+
+- [SirAxolott](https://github.com/SirAxolott)
+
+  
+
+## License
+
+  
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+
+  
+
+### Third-Party Licenses
+
+  
+
+- **QMK Firmware**: QMK is licensed under the GNU General Public License v2. See the [QMK License](https://github.com/qmk/qmk_firmware/blob/master/LICENSE).
+
+- **VIA**: VIA configuration files are compatible with the VIA software, which is licensed under the MIT License. See the [VIA License](https://github.com/the-via/releases/blob/main/LICENSE).
+
+  
+
+---
+
+  
+
+For more information, see the [QMK Documentation](https://docs.qmk.fm/) and [VIA](https://usevia.app/).
