@@ -1,7 +1,7 @@
 ---
 layout: page
 title: DIY Mechanical Keyboard
-description: with background image
+description: A customizable home-made keyboard
 img: assets/img/keyboard.jpg
 importance: 1
 category: work
