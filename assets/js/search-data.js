@@ -55,7 +55,7 @@ ninja.data = [{
           description: "",
           section: "News",},{id: "projects-diy-mechanical-keyboard",
           title: 'DIY Mechanical Keyboard',
-          description: "with background image",
+          description: "A customizable home-made keyboard",
           section: "Projects",handler: () => {
               window.location.href = "/projects/DIY%20Mechanical%20Keyboard/";
             },},{
