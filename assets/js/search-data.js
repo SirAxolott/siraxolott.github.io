@@ -37,18 +37,7 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-diy-mechanical-keyboard-part-1",
-        
-          title: "DIY Mechanical Keyboard Part 1",
-        
-        description: "Make your own mechanical keyboard",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2025/diy-mechanical-keyboard/";
-          
-        },
-      },{id: "books-the-godfather",
+        },{id: "books-the-godfather",
           title: 'The Godfather',
           description: "",
           section: "Books",handler: () => {
