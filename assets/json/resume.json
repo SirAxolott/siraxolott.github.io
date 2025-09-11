@@ -35,17 +35,10 @@
       "summary": "Designed a Mechanical Keyboard using a Raspberry Pi Pico.",
       "startDate": "2025-03-16",
       "endDate": "2025-04-22",
-      "url": "https://github.com/SirAxolott/opkeyboard"
-    },
-    {
-      "name": "Firefly - Drone Swarm",
-      "summary": "Prototyped a drone that has auto levelling capabilities using PID control.",
-      "startDate": "2025-06-13",
-      "endDate": "Present",
       "url": ""
     }
   ],
- %%  "skills": [
+  "skills": [
     {
       "name": "",
       "level": "",
@@ -53,7 +46,7 @@
       "keywords": [
       ]
     }
-  ], %%
+  ],
   "interests": [
     {
       "name": "Computer Engineering",
