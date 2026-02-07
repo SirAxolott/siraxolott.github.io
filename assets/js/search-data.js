@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "books-the-godfather",
+        },{id: "post-diy-keyboard-v1",
+        
+          title: "DIY Keyboard V1",
+        
+        description: "My first mechanical keyboard build!",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/kbv1/";
+          
+        },
+      },{id: "books-the-godfather",
           title: 'The Godfather',
           description: "",
           section: "Books",handler: () => {
