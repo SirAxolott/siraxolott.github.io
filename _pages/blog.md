@@ -4,16 +4,6 @@ permalink: /blog/
 title: blog
 nav: true
 nav_order: 1
-_styles: |
-  .post h2,
-  .post h3,
-  .post h4 {
-    color: var(--global-text-color);
-  }
-  .post h2 {
-    border-left: 0;
-    padding-left: 0;
-  }
 pagination:
   enabled: true
   collection: posts
@@ -25,6 +15,18 @@ pagination:
     before: 1 # The number of links before the current page
     after: 3 # The number of links after the current page
 ---
+
+<style>
+  .post h2,
+  .post h3,
+  .post h4 {
+    color: var(--global-text-color);
+  }
+  .post h2 {
+    border-left: 0;
+    padding-left: 0;
+  }
+</style>
 
 <div class="post">
 
