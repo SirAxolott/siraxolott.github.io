@@ -2,96 +2,74 @@
   type: map
   contents:
     - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
-    - name: Languages
-      value: English, German
+      value: Ojas Patil
+    - name: Phone
+      value: 608-724-4265
+    - name: Email
+      value: ospatil@wisc.edu
+    - name: LinkedIn
+      value: https://www.linkedin.com/in/ojas-s-patil/
+    - name: GitHub
+      value: https://github.com/SirAxolott
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
-      description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
-      description:
-        - Description 1.
-        - Description 2.
+    - title: B.S. in Computer Engineering, Computer Science
+      institution: University of Wisconsin-Madison, Madison, WI
+      year: Sep 2024 -- May 2028
 
-- title: Experience
+- title: Technical Skills
+  type: map
+  contents:
+    - name: Programming Languages
+      value: SystemVerilog, Java, MATLAB, C/C++, Assembly Code, HTML/CSS
+    - name: CAD & Simulation Tools
+      value: KiCad, AutoCad Fusion, ModelSim, QuestaSim, LTspice, Altium Designer
+    - name: Libraries & Tools
+      value: Linux, Git, Bash, Latex
+
+- title: Projects
   type: time_table
   contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
+    - title: LED Launch Signature System
+      institution: Student Org Project - Wisconsin Space Program
+      year: Sep 2025 -- Oct 2025
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
-          contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
+        - Designed a PCB using Altium Designer to create a launch signature system for a high-altitude rocket.
+        - Programmed an Arduino Nano microcontroller in C++ to control the LED patterns based on the rocket's flight phases.
+        - Integrated with the rocket's existing systems to ensure reliable operation during launch and recovery.
+    - title: Firefly
+      institution: Open-Source Low-Cost Microdrone
+      year: Jul 2025 -- Present
       description:
-        - Description 1.
-        - Description 2.
-
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
+        - Developed a ESP8266-based micro-drone with auto levelling capabilities using PID control.
+        - Designed a flight controller PCB in KiCad and relevant firmware in Arduino C++.
+        - Repository: https://github.com/Firefly-MicroDrone
+    - title: OP Keyboard
+      institution: DIY Mechanical Keyboard
+      year: Mar 2025 -- Apr 2025
       description:
+        - Designed a mechanical keyboard based on the Raspberry Pi Pico that features hot-swappable switches and a knob.
+        - Designed the PCB in KiCad and the case in Fusion 360.
+        - Uses the QMK firmware with support for customizable keymaps and layers using VIA (in-browser app).
+        - Repository: https://github.com/SirAxolott/opkeyboard
+    - title: FPGA-Based Machine Learning Motion Detection System
+      institution: Course Project - Digital System Fundamentals
+      year: Jan 2025 -- May 2025
+      description:
+        - Implemented a machine learning program to classify a user's motion by processing data from an accelerometer.
+        - Designed using System Verilog, simulated on ModelSim, compiled on Questa, and tested on an Intel Altera FPGA.
+        - Based on a right-shift register that captures the 4-bit serial data packet.
+        - Repository: https://github.com/SirAxolott/ECE352-AHW
 
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
-
-- title: Open Source Projects
+- title: Work Experience
   type: time_table
   contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
-
-- title: Honors and Awards
-  type: time_table
-  contents:
-    - year: 1921
-      items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
-      items:
-        - Max Planck Medal
-
-- title: Academic Interests
-  type: nested_list
-  contents:
-    - title: Topic 1.
-      items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
-      items:
-        - Description 1.
-        - Description 2.
-
-- title: Other Interests
-  type: list
-  contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+    - title: Student Stocker
+      institution: University of Wisconsin-Madison, Madison, WI
+      year: Nov 2024 -- Present
+      description:
+        - Collaborated with team members to efficiently assemble and fulfill ready-to-eat meal package orders for university dining services.
+        - Managed raw material inventory by verifying incoming shipments and organizing stock in designated storage areas.
+        - Worked with the catering team to set up, manage, and maintain professional food buffets for university events.
