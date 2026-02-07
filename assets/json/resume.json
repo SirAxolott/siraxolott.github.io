@@ -4,54 +4,124 @@
     "label": "Student",
     "image": "",
     "email": "ospatil@wisc.edu",
-    "phone": "(608)-724-465",
-    "url": "https://siraxolott.github.io/"
+    "phone": "(608)-724-4265",
+    "url": "https://siraxolott.github.io/",
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "ojas-s-patil",
+        "url": "https://www.linkedin.com/in/ojas-s-patil/"
+      },
+      {
+        "network": "GitHub",
+        "username": "SirAxolott",
+        "url": "https://github.com/SirAxolott"
+      }
+    ]
   },
   "education": [
     {
       "institution": "University of Wisconsin-Madison",
       "location": "Wisconsin, USA",
       "url": "https://www.wisc.edu/",
-      "area": "Computer Engineering",
-      "studyType": "Bachelor of Science",
-      "startDate": "2024-08-01",
-      "endDate": "2028-05-01",
-      "score": "10"
+      "area": "Computer Engineering, Computer Science",
+      "studyType": "B.S.",
+      "startDate": "2024-09-01",
+      "endDate": "2028-05-01"
     }
   ],
-  "work": [
+  "skills": [
     {
-      "name": "Gordon Dining and Culinary Services",
-      "position": "Student Stocker",
-      "url": "https://www.housing.wisc.edu/dining/locations/gordon/",
-      "startDate": "2024-11-01",
-      "endDate": "Present",
-      "summary": "Executed accurate order fulfillment by preparing and packaging products into retail-ready containers based on specific order lists, contributing directly to sales operations and product availability."
+      "name": "Programming Languages",
+      "keywords": [
+        "SystemVerilog",
+        "Java",
+        "MATLAB",
+        "C/C++",
+        "Assembly Code",
+        "HTML/CSS"
+      ]
+    },
+    {
+      "name": "CAD & Simulation Tools",
+      "keywords": [
+        "KiCad",
+        "AutoCAD Fusion",
+        "ModelSim",
+        "QuestaSim",
+        "LTspice",
+        "Altium Designer"
+      ]
+    },
+    {
+      "name": "Libraries & Tools",
+      "keywords": [
+        "Linux",
+        "Git",
+        "Bash",
+        "Latex"
+      ]
     }
   ],
   "projects": [
     {
-      "name": "DIY Mechanical Keyboard",
-      "summary": "Designed a Mechanical Keyboard using a Raspberry Pi Pico.",
-      "startDate": "2025-03-16",
-      "endDate": "2025-04-22",
-      "url": "https://github.com/SirAxolott/opkeyboard"
+      "name": "LED Launch Signature System",
+      "startDate": "2025-09-01",
+      "endDate": "2025-10-01",
+      "summary": "Student Org Project - Wisconsin Space Program",
+      "highlights": [
+        "Designed a PCB using Altium Designer to create a launch signature system for a high-altitude rocket.",
+        "Programmed an Arduino Nano microcontroller in C++ to control the LED patterns based on the rocket's flight phases.",
+        "Integrated with the rocket's existing systems to ensure reliable operation during launch and recovery."
+      ]
     },
     {
-      "name": "Firefly - Drone Swarm",
-      "summary": "Prototyped a drone that has auto levelling capabilities using PID control.",
-      "startDate": "2025-06-13",
+      "name": "Firefly",
+      "startDate": "2025-07-01",
       "endDate": "Present",
-      "url": ""
+      "summary": "Open-Source Low-Cost Microdrone",
+      "url": "https://github.com/Firefly-MicroDrone",
+      "highlights": [
+        "Developed a ESP8266-based micro-drone with auto levelling capabilities using PID control.",
+        "Designed a flight controller PCB in KiCad and relevant firmware in Arduino C++."
+      ]
+    },
+    {
+      "name": "OP Keyboard",
+      "startDate": "2025-03-01",
+      "endDate": "2025-04-01",
+      "summary": "DIY Mechanical Keyboard",
+      "url": "https://github.com/SirAxolott/opkeyboard",
+      "highlights": [
+        "Designed a mechanical keyboard based on the Raspberry Pi Pico that features hot-swappable switches and a knob.",
+        "Designed the PCB in KiCad and the case in Fusion 360.",
+        "Uses the QMK firmware with support for customizable keymaps and layers using VIA (in-browser app)."
+      ]
+    },
+    {
+      "name": "FPGA-Based Machine Learning Motion Detection System",
+      "startDate": "2025-01-01",
+      "endDate": "2025-05-01",
+      "summary": "Course Project - Digital System Fundamentals",
+      "url": "https://github.com/SirAxolott/ECE352-AHW",
+      "highlights": [
+        "Implemented a machine learning program to classify a user's motion by processing data from an accelerometer.",
+        "Designed using System Verilog, simulated on ModelSim, compiled on Questa, and tested on an Intel Altera FPGA.",
+        "Based on a right-shift register that captures the 4-bit serial data packet."
+      ]
     }
   ],
-  "interests": [
+  "work": [
     {
-      "name": "Computer Engineering",
-      "icon": "fa-solid fa-tag",
-      "keywords": [
-        "Computer Architecture",
-        "VLSI"
+      "name": "University of Wisconsin-Madison",
+      "position": "Student Stocker",
+      "location": "Madison, WI",
+      "startDate": "2024-11-01",
+      "endDate": "Present",
+      "highlights": [
+        "Collaborated with team members to efficiently assemble and fulfill ready-to-eat meal package orders for university dining services.",
+        "Managed raw material inventory by verifying incoming shipments and organizing stock in designated storage areas.",
+        "Worked with the catering team to set up, manage, and maintain professional food buffets for university events."
       ]
     }
   ],
@@ -72,6 +142,4 @@
       "icon": ""
     }
   ]
-  
-
 }
