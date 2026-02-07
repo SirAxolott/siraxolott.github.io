@@ -4,6 +4,16 @@ permalink: /blog/
 title: blog
 nav: true
 nav_order: 1
+_styles: |
+  .post h2,
+  .post h3,
+  .post h4 {
+    color: var(--global-text-color);
+  }
+  .post h2 {
+    border-left: 0;
+    padding-left: 0;
+  }
 pagination:
   enabled: true
   collection: posts
