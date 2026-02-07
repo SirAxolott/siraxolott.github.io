@@ -935,6 +935,17 @@ html.transition *:after {
       }
     }
   }
+
+  h2,
+  h3,
+  h4 {
+    color: var(--global-theme-color);
+  }
+
+  h2 {
+    border-left: 4px solid var(--global-theme-color);
+    padding-left: 0.6rem;
+  }
 }
 
 progress {
