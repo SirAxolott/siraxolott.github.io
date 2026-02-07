@@ -9,129 +9,91 @@ related_publications: true
 ---
 # opkeyboard
 
-  
+A 75 percent custom mechanical keyboard with a two-PCB stack, QMK firmware, and VIA support.
 
-A custom mechanical keyboard project designed and built by SirAxolott.
+## Highlights
 
-  
+- 75 percent layout in a compact footprint
+- Two-PCB stack: switchboard (daughterboard) + main board (dev board carrier)
+- Raspberry Pi Pico (RP2040) as the controller
+- Sandwich mount with pin-connector socket between boards for easy swaps
+- QMK firmware with VIA for quick remapping
+- Rotary encoder support in the design
 
-## Overview
+## Hardware Overview
 
-  
+### PCB Stack
 
-This project features a 75% mechanical keyboard with a custom PCB, case, and fully programmable firmware using [QMK Firmware](https://qmk.fm/). The keyboard supports VIA for easy key remapping and configuration.
+- **Switchboard (daughterboard):** holds the switches and routes the matrix
+- **Main board:** carries the Raspberry Pi Pico and interfaces with the switchboard
+- **Interconnect:** pin-connector socket between the two boards
 
-  
-  
-  
+This split design is intended for reverse compatibility. If the controller changes in a future revision, the switchboard can remain the same while only the main board is updated.
 
-## Project Structure
+### Controller
 
-  
+- **MCU:** Raspberry Pi Pico (RP2040)
 
-- **Case/**  
+### Case and Mount
 
-   Contains the keyboard case design files, including STEP files for 3D modeling.
+- Sandwich mount with the PCB stack captured between the top and bottom case
 
-  
+## Firmware
 
-- **PCB/**  
+- **Firmware:** QMK
+- **Configuration:** VIA (load the provided `via.json`)
 
-   Includes PCB design files, Bill of Materials (BOM), and pick-and-place files for manufacturing.
+### Build
 
-  
-
-- **Firmware/**  
-
-   Houses the QMK firmware configuration, including keymaps and VIA support.
-
-  
-  
-
-## Features
-
-  
-
-- **QMK Firmware**: Powerful open-source firmware for custom keyboards.
-
-- **VIA Support**: Real-time key remapping using VIA software.
-
-- **Rotary Encoder Support**: The keyboard features a single rotary encoder on the PCB, allowing you to assign custom actions such as volume control, scrolling, or other functions via QMK and VIA.
-
-- **Custom Keymaps**: Easily modify key layouts in `keymaps/`.
-
-- **Open Hardware**: All design files are open for modification and improvement.
-
-  
-
-## Getting Started
-
-  
-
-### 1. Building the Firmware
-
-  
-
-1. Set up the QMK build environment ([QMK Docs](https://docs.qmk.fm/#/newbs_getting_started)).
-
-2. Clone this repository and navigate to the `Firmware` directory.
-
-3. Build the firmware:
+1. Install and set up QMK:
+   - https://docs.qmk.fm/#/newbs_getting_started
+2. From the firmware directory:
 
 ```sh
 qmk compile -kb opkeyboard -km default
 ```
 
-### 2. Flashing the Firmware
+### Flashing (QMK)
 
-  
+There are two common ways to flash:
 
-1. Enter bootloader mode (use the reset button or Bootmagic).
+**Option A: QMK flash command**
 
-2. Flash the firmware:
+1. Put the board into bootloader mode (hold BOOTSEL while plugging in the Pico, or use the reset button if available).
+2. Flash with QMK:
 
 ```sh
-   qmk flash -kb opkeyboard -km default
+qmk flash -kb opkeyboard -km default
 ```
 
-  
+**Option B: UF2 drag and drop**
 
-### 3. VIA Configuration
+1. Put the Pico into bootloader mode.
+2. A drive named `RPI-RP2` appears.
+3. Copy the compiled UF2 file to that drive.
 
-  
+### VIA Setup
 
-- Open VIA and load the `via.json` file from the `Firmware/` directory to enable advanced remapping.
+1. Open https://usevia.app/
+2. Load the `via.json` from the firmware folder.
+3. Remap keys and encoder behavior.
 
-  
+## Project Structure
 
-## Maintainer
+- `Case/` - case CAD files (STEP)
+- `PCB/` - PCB files, BOM, and assembly outputs
+- `Firmware/` - QMK firmware and VIA config
 
-  
+## Known Issues
 
-- [SirAxolott](https://github.com/SirAxolott)
+- Case height is taller than desired
+- Main board v1.1 has a rotary encoder design error; a v1.2 revision is in progress
 
-  
+## Roadmap
+
+- Per-key addressable RGB LEDs
+- Improved case height and fit
 
 ## License
 
-  
-
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
-  
-
-### Third-Party Licenses
-
-  
-
-- **QMK Firmware**: QMK is licensed under the GNU General Public License v2. See the [QMK License](https://github.com/qmk/qmk_firmware/blob/master/LICENSE).
-
-- **VIA**: VIA configuration files are compatible with the VIA software, which is licensed under the MIT License. See the [VIA License](https://github.com/the-via/releases/blob/main/LICENSE).
-
-  
-
----
-
-  
-
-For more information, see the [QMK Documentation](https://docs.qmk.fm/) and [VIA](https://usevia.app/).
+MIT
