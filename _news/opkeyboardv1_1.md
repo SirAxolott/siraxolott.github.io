@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-OP Keyboard V1 update: the main board v1.1 has been sent for print, and a finalized V1 update is coming soon.
+OP Keyboard V1 update: the main board v1.1 has been sent for manufacturing, and a finalized V1 update is coming soon.
