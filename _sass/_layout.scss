@@ -50,4 +50,14 @@ body.sticky-bottom-footer {
 * Projects
 *****************************************************************************/
 
-// TODO: redefine projects layout.
+.projects {
+  img.card-img-top,
+  img.card-img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+  }
+}
