@@ -11,7 +11,7 @@ related_publications: false
 
 FireFly is an open-source microdrone project focused on an affordable, customizable platform. I led the firmware development, and the control package is handled by @ModernOctave. The current build uses a NodeMCU 1.0 (ESP8266 dev board) with an MPU6050 IMU, while future revisions aim to move to a native ESP8266 solution.
 
-[Image idea: hero shot of the drone or a clean CAD render]
+<!-- [Image idea: hero shot of the drone or a clean CAD render] -->
 
 ## Highlights
 
@@ -52,7 +52,7 @@ The PCB has already been sent for manufacturing. It is a 4-layer design with ded
 
 The firmware is organized into classes for each component (IMU, motor control, comms, etc.), which makes it straightforward to replace individual modules or swap in new hardware without a full rewrite.
 
-[Image idea: firmware architecture diagram or class module map]
+<!-- [Image idea: firmware architecture diagram or class module map] -->
 
 ## Control Package
 
@@ -73,7 +73,7 @@ docker run --rm --network host --privileged \
   ghcr.io/firefly-microdrone/firefly-control:latest
 ```
 
-[Image idea: joystick control UI or ROS2 node graph]
+<!-- [Image idea: joystick control UI or ROS2 node graph] -->
 
 ## Repositories
 
@@ -86,4 +86,4 @@ docker run --rm --network host --privileged \
 - Transition from NodeMCU dev board to a native ESP8266 module
 - Iterate on IMU mounting, noise isolation, and power delivery
 
-[Image idea: flight test photo or short GIF]
+<!-- [Image idea: flight test photo or short GIF] -->
