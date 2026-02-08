@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-OP Keyboard V2 update: the PCB is ready and will be sent for manufacturing soon.
+The OP Keyboard V2 PCB is ready and will be sent for manufacturing soon.

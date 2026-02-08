@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-OP Keyboard V1.1 update: I am changing the plate mounting to a sandwich setup and will be testing PORON foam strips.
+Plate mounting for OP Keyboard V1.1 is changing to a sandwich setup, and I will be testing PORON foam strips.
