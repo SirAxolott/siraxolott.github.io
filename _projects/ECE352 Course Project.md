@@ -1,7 +1,7 @@
 ---
 layout: page
-title: FPGA-Based Machine Learning Motion Detection System
-description: ECE 352 Course Project
+title: ECE 352 Course Project
+description: FPGA-Based Machine Learning Motion Detection System
 img: assets/img/fpga.jpg
 importance: 3
 category: university
