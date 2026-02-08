@@ -67,6 +67,11 @@ ninja.data = [{
           description: "A customizable home-made keyboard",
           section: "Projects",handler: () => {
               window.location.href = "/projects/DIY%20Mechanical%20Keyboard/";
+            },},{id: "projects-fpga-based-machine-learning-motion-detection-system",
+          title: 'FPGA-Based Machine Learning Motion Detection System',
+          description: "ECE 352 Course Project",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/ECE352%20Course%20Project/";
             },},{id: "projects-firefly-microdrone",
           title: 'FireFly Microdrone',
           description: "Open-source microdrone firmware, control stack, and custom hardware.",
