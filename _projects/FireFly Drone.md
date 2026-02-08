@@ -37,7 +37,16 @@ We prototyped on a perf board first, but it did not perform reliably. We suspect
 
 The PCB has already been sent for manufacturing. It is a 4-layer design with dedicated GND and 5V planes to improve current delivery and provide better heat sinking.
 
-[Image idea: PCB render (top/bottom) with layer callouts]
+<div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; align-items: flex-start;">
+  <div style="max-width: 360px; text-align: center;">
+    <img src="{{ "/assets/img/droneV0_1_front.png" | relative_url }}" alt="FireFly PCB render, front side" style="width: 100%; height: auto; display: block;">
+    <div style="font-size: 0.9em; margin-top: 6px;">Front side</div>
+  </div>
+  <div style="max-width: 360px; text-align: center;">
+    <img src="{{ "/assets/img/droneV0_1_back.png" | relative_url }}" alt="FireFly PCB render, back side" style="width: 100%; height: auto; display: block;">
+    <div style="font-size: 0.9em; margin-top: 6px;">Back side</div>
+  </div>
+</div>
 
 ## Firmware
 
