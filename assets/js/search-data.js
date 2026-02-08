@@ -67,6 +67,11 @@ ninja.data = [{
           description: "A customizable home-made keyboard",
           section: "Projects",handler: () => {
               window.location.href = "/projects/DIY%20Mechanical%20Keyboard/";
+            },},{id: "projects-firefly-microdrone",
+          title: 'FireFly Microdrone',
+          description: "Open-source microdrone firmware, control stack, and custom hardware.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/FireFly%20Drone/";
             },},{
         id: 'social-email',
         title: 'email',
