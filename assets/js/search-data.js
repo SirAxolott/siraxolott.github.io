@@ -53,16 +53,14 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
+            },},{id: "news-op-keyboard-v1-update-the-main-board-v1-1-has-been-sent-for-manufacturing-and-a-finalized-v1-update-is-coming-soon",
+          title: 'OP Keyboard V1 update: the main board v1.1 has been sent for manufacturing,...',
           description: "",
-          section: "News",},{id: "news-a-long-announcement-with-details",
-          title: 'A long announcement with details',
+          section: "News",},{id: "news-op-keyboard-v1-1-update-i-am-changing-the-plate-mounting-to-a-sandwich-setup-and-will-be-testing-poron-foam-strips",
+          title: 'OP Keyboard V1.1 update: I am changing the plate mounting to a sandwich...',
           description: "",
-          section: "News",handler: () => {
-              window.location.href = "/news/announcement_2/";
-            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
-          title: 'A simple inline announcement with Markdown emoji! :sparkles: :smile:',
+          section: "News",},{id: "news-op-keyboard-v2-update-the-pcb-is-ready-and-will-be-sent-for-manufacturing-soon",
+          title: 'OP Keyboard V2 update: the PCB is ready and will be sent for...',
           description: "",
           section: "News",},{id: "projects-diy-mechanical-keyboard",
           title: 'DIY Mechanical Keyboard',
