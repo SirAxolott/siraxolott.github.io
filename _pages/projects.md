@@ -18,6 +18,7 @@ _styles: |
 # Add new categories here to group project cards by category.
 display_categories:
   - electronics
+  - university
 horizontal: false
 ---
 
