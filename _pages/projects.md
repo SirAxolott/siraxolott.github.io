@@ -15,9 +15,9 @@ _styles: |
     border-left: 0;
     padding-left: 0;
   }
+# Add new categories here to group project cards by category.
 display_categories:
-  - work
-  - fun
+  - electronics
 horizontal: false
 ---
 

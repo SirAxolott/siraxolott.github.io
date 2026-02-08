@@ -4,7 +4,7 @@ title: DIY Mechanical Keyboard
 description: A customizable home-made keyboard
 img: assets/img/keyboard.jpg
 importance: 2
-category: fun
+category: electronics
 related_publications: true
 ---
 # opkeyboard
