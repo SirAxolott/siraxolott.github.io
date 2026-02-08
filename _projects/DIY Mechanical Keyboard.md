@@ -2,7 +2,7 @@
 layout: page
 title: DIY Mechanical Keyboard
 description: A customizable home-made keyboard
-img: assets/img/keyboard.jpg
+img: assets/img/keyboard.jpeg
 importance: 2
 category: electronics
 related_publications: true

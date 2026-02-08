@@ -2,7 +2,7 @@
 layout: page
 title: FireFly Microdrone
 description: Open-source microdrone firmware, control stack, and custom hardware.
-img: assets/img/firefly-drone.jpg
+img: assets/img/droneV0_1_front.png
 importance: 1
 category: electronics
 related_publications: false
