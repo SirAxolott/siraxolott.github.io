@@ -2,12 +2,11 @@
 layout: page
 title: FPGA-Based Machine Learning Motion Detection System
 description: ECE 352 Course Project
-img: assets/img/template_error.png
+img: assets/img/fpga.jpg
 importance: 3
 category: university
 related_publications: false
 ---
-# FPGA-Based Machine Learning Motion Detection System
 
 This semester-long project builds a complete FPGA-based activity monitor. Instead of treating each assignment as a separate deliverable, the flow is one cohesive system: a datapath for neural-style math, a serial receiver to ingest sensor data, and a controller that ties everything together into a live classifier.
 
