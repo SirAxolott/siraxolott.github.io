@@ -53,8 +53,8 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-main-board-v1-1-for-op-keyboard-v1-has-been-sent-for-manufacturing-and-a-finalized-v1-update-is-coming-soon",
-          title: 'Main board v1.1 for OP Keyboard V1 has been sent for manufacturing, and...',
+            },},{id: "news-main-board-v1-1-for-op-keyboard-v1-and-the-firefly-v0-1-pcb-were-sent-for-manufacturing-updates-for-both-will-come-soon",
+          title: 'Main board v1.1 for OP Keyboard V1 and the FireFly v0.1 PCB were...',
           description: "",
           section: "News",},{id: "news-plate-mounting-for-op-keyboard-v1-1-is-changing-to-a-sandwich-setup-and-i-will-be-testing-poron-foam-strips",
           title: 'Plate mounting for OP Keyboard V1.1 is changing to a sandwich setup, and...',
