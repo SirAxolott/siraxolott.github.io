@@ -56,8 +56,8 @@ ninja.data = [{
             },},{id: "news-i-sent-the-op-keyboard-v1-1-main-board-and-the-firefly-v0-1-pcb-out-for-manufacturing-together",
           title: 'I sent the OP Keyboard V1.1 main board and the FireFly v0.1 PCB...',
           description: "",
-          section: "News",},{id: "news-opkeyboardv1-1-plate",
-          title: 'Opkeyboardv1_1_plate',
+          section: "News",},{id: "news-i-am-switching-the-keyboard-to-a-gasket-mount-using-foam-strips",
+          title: 'I am switching the keyboard to a gasket mount using foam strips.',
           description: "",
           section: "News",handler: () => {
               window.location.href = "/news/opkeyboardv1_1_plate/";
