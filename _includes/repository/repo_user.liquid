@@ -23,12 +23,14 @@
     <img
       class="only-light w-100"
       alt="{{ include.username }}"
-      src="https://github-readme-stats-q95nuq4y1-siraxolotts-projects.vercel.app/api/?username={{ include.username }}&theme={{ site.repo_theme_light }}&locale={{ lang }}&show_icons=true"
+      src="https://github-readme-stats.vercel.app/api/?username={{ include.username }}&theme={{ site.repo_theme_light }}&locale={{ lang }}&show_icons=true"
+      onerror="this.onerror=null;this.src='https://github.com/{{ include.username }}.png?size=400';"
     >
     <img
       class="only-dark w-100"
       alt="{{ include.username }}"
-      src="https://github-readme-stats-q95nuq4y1-siraxolotts-projects.vercel.app/api/?username={{ include.username }}&theme={{ site.repo_theme_dark }}&locale={{ lang }}&show_icons=true"
+      src="https://github-readme-stats.vercel.app/api/?username={{ include.username }}&theme={{ site.repo_theme_dark }}&locale={{ lang }}&show_icons=true"
+      onerror="this.onerror=null;this.src='https://github.com/{{ include.username }}.png?size=400';"
     >
   </a>
 </div>
