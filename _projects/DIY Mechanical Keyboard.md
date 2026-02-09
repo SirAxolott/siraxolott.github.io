@@ -36,7 +36,7 @@ This split design is intended for reverse compatibility. If the controller chang
 
 ### Case and Mount
 
-- Sandwich mount with the PCB stack captured between the top and bottom case
+- Tray mount with the PCB stack captured between the top and bottom case
 
 ## Firmware
 

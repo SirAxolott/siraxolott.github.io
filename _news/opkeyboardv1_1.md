@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Main board v1.1 for OP Keyboard V1 and the FireFly v0.1 PCB were sent for manufacturing. Updates for both will come soon.
+I sent the OP Keyboard V1.1 main board and the FireFly v0.1 PCB out for manufacturing together.
