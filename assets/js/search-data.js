@@ -56,10 +56,12 @@ ninja.data = [{
             },},{id: "news-i-sent-the-op-keyboard-v1-1-main-board-and-the-firefly-v0-1-pcb-out-for-manufacturing-together",
           title: 'I sent the OP Keyboard V1.1 main board and the FireFly v0.1 PCB...',
           description: "",
-          section: "News",},{id: "news-i-am-switching-the-keyboard-to-a-gasket-mount-using-foam-strips-honestly-in-v1-i-kept-costs-low-and-did-not-experiment-much-so-the-mount-choice-was-pretty-conservative-this-time-i-want-to-explore-more-a-lot-of-builds-use-gasket-mounts-with-o-rings-or-petg-gaskets-but-while-researching-v2-i-saw-someone-try-foam-strips-they-were-cheap-on-aliexpress-so-i-decided-to-try-that-approach-once-the-v2-build-is-done-i-also-want-to-get-deeper-into-keyboard-sound-modding",
-          title: 'I am switching the keyboard to a gasket mount using foam strips. Honestly,...',
+          section: "News",},{id: "news-opkeyboardv1-1-plate",
+          title: 'Opkeyboardv1_1_plate',
           description: "",
-          section: "News",},{id: "news-i-just-wrapped-the-op-keyboard-v2-pcb-and-i-am-sending-it-out-for-manufacturing-soon",
+          section: "News",handler: () => {
+              window.location.href = "/news/opkeyboardv1_1_plate/";
+            },},{id: "news-i-just-wrapped-the-op-keyboard-v2-pcb-and-i-am-sending-it-out-for-manufacturing-soon",
           title: 'I just wrapped the OP Keyboard V2 PCB, and I am sending it...',
           description: "",
           section: "News",},{id: "projects-diy-mechanical-keyboard",
