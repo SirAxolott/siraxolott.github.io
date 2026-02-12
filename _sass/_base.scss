@@ -551,7 +551,7 @@ footer.sticky-bottom {
 
 @media (min-width: 992px) {
   .repo-hub {
-    grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
     align-items: start;
   }
 }
@@ -560,7 +560,7 @@ footer.sticky-bottom {
   background: var(--global-card-bg-color);
   border: 1px solid var(--global-divider-color);
   border-radius: 18px;
-  padding: 1.75rem;
+  padding: 1.25rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 90px;
@@ -574,16 +574,16 @@ footer.sticky-bottom {
 }
 
 .profile-card__avatar {
-  width: 86px;
-  height: 86px;
+  width: 72px;
+  height: 72px;
   border-radius: 18px;
   object-fit: cover;
   border: 1px solid var(--global-divider-color);
 }
 
 .profile-card__avatar-fallback {
-  width: 86px;
-  height: 86px;
+  width: 72px;
+  height: 72px;
   border-radius: 18px;
   display: flex;
   align-items: center;
@@ -598,7 +598,7 @@ footer.sticky-bottom {
 
 .profile-card__name {
   font-family: "Fraunces", "DM Serif Display", "Iowan Old Style", "Palatino", "Times New Roman", serif;
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   margin-bottom: 0.5rem;
 }
 
@@ -642,7 +642,7 @@ footer.sticky-bottom {
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 960px) {
   .repo-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -662,6 +662,7 @@ footer.sticky-bottom {
   gap: 0.75rem;
   padding: 1.25rem;
   height: 100%;
+  min-height: 190px;
   color: inherit;
   text-decoration: none;
 }
@@ -676,6 +677,9 @@ footer.sticky-bottom {
 .repo-card__title {
   font-size: 1.05rem;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .repo-card__owner {
@@ -702,6 +706,10 @@ footer.sticky-bottom {
   font-size: 0.92rem;
   line-height: 1.5;
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .repo-card__desc--muted {
@@ -714,6 +722,7 @@ footer.sticky-bottom {
   gap: 0.75rem;
   font-size: 0.78rem;
   color: var(--global-text-color-light);
+  margin-top: auto;
 }
 
 .repo-card__stat {
