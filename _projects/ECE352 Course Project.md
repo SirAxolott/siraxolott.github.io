@@ -39,8 +39,8 @@ The end result is a thigh-mounted activity monitor that classifies motion states
 
 - https://github.com/SirAxolott/ECE352-AHW
 
-## Opportunities for Images
+<!-- ## Opportunities for Images
 
 - Toolchain screenshots (simulation waveforms or timing diagrams)
 - Datapath/serial-RX FSM diagrams
-- Final on-board demo with 7-seg output
+- Final on-board demo with 7-seg output -->
