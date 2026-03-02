@@ -37,7 +37,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "post-diy-keyboard-v1",
+        },{id: "post-diy-keyboard-update",
+        
+          title: "DIY Keyboard Update",
+        
+        description: "Quick update on my progress for the OP Keyboard project.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/kbv1-update/";
+          
+        },
+      },{id: "post-diy-keyboard-v1",
         
           title: "DIY Keyboard V1",
         
